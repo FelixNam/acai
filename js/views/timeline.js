@@ -5,7 +5,7 @@
    Loaded full-bleed (no #ui=0, no rotation) so detail opens upright.
    ============================================================ */
 import { setCrumb, esc } from '../ui.js';
-import { L } from '../i18n.js';
+import { L, kwLabel } from '../i18n.js';
 import { mount } from '../app.js';
 import { meta } from '../data.js';
 import { keywordDashHTML, wireKeywordDash } from './keyworddash.js';
@@ -41,10 +41,10 @@ function kxRep(M,g,y){
 function kxSayHTML(M,g,y){
   const r=kxRep(M,g,y); const gl=(g==='전체')?L('아카이브 전체','the whole archive'):g; const dl=KX_DIMLABEL[r.dim]();
   const tail = r.value ? L(hadBatchim(r.value)?'이었습니다':'였습니다','') : '';
-  const chips=r.list.slice(0,3).map((x,i)=>`<a class="kx-chip${i===0?' is-1':''}" href="#/search?q=${encodeURIComponent(x.k)}">${esc(x.k)}<i>${x.n}</i></a>`).join('');
+  const chips=r.list.slice(0,3).map((x,i)=>`<a class="kx-chip${i===0?' is-1':''}" href="#/search?q=${encodeURIComponent(x.k)}">${esc(kwLabel(x.k))}<i>${x.n}</i></a>`).join('');
   return `<div class="kx-say">
     <p class="kx-say-pre">${L(`<b class="kx-yr">${y}</b>년 <b>${esc(gl)}</b>의 대표 ${dl}는`, `<b>${esc(gl)}</b>'s defining ${dl} in <b class="kx-yr">${y}</b> was`)}</p>
-    ${ r.value ? `<a class="kx-say-kw" href="#/search?q=${encodeURIComponent(r.value)}" title="${L('이 키워드로 검색','Search this keyword')}">${esc(r.value)}</a>
+    ${ r.value ? `<a class="kx-say-kw" href="#/search?q=${encodeURIComponent(r.value)}" title="${L('이 키워드로 검색','Search this keyword')}">${esc(kwLabel(r.value))}</a>
       <p class="kx-say-post">${tail} <span class="kx-say-n">${L(`· 활동 ${r.total.toLocaleString()}건`, `· ${r.total.toLocaleString()} activities`)}</span></p>`
       : `<p class="kx-say-kw kx-empty">${L('데이터 없음','No data')}</p>` }
     <div class="kx-chips">${chips}</div>
@@ -57,7 +57,7 @@ function kxYearsHTML(M,g,y0){
     const r=kxRep(M,g,y); const f=Math.log(r.total+1)/Math.log(max+1); const w=Math.round(16+84*f);
     const top3=r.list.slice(0,3);
     const list = top3.length
-      ? top3.map((x,i)=>`<span class="kx-yc-kw"><b>${i+1}</b><span>${esc(x.k)}</span></span>`).join('')
+      ? top3.map((x,i)=>`<span class="kx-yc-kw"><b>${i+1}</b><span>${esc(kwLabel(x.k))}</span></span>`).join('')
       : `<span class="kx-yc-kw kx-empty"><span>${L('데이터 없음','No data')}</span></span>`;
     return `<button class="kx-yc${y===y0?' is-on':''}" data-y="${y}" title="${L(`${y}년 대표 ${KX_DIMLABEL[r.dim]()} · 활동 ${r.total.toLocaleString()}건`, `${y} defining ${KX_DIMLABEL[r.dim]()} · ${r.total.toLocaleString()} activities`)}">
       <span class="kx-yc-top"><span class="kx-yc-y">${y}</span><span class="kx-yc-n">${r.total.toLocaleString()}</span></span>

@@ -135,7 +135,12 @@ async function start(){
   window.addEventListener('hashchange', route);
   // preload meta + search index in background
   meta(); searchIndex();
-  fetch('data/keyword_en.json').then(r=>r.ok?r.json():{}).then(setKwMap).catch(()=>{});  // EN keyword overlay
+  // EN overlays (keyword + category) — EN 모드에서는 초기 렌더 전에 로드 완료를 보장 (렌더 레이스 방지)
+  const _ov = Promise.all([
+    fetch('data/keyword_en.json').then(r=>r.ok?r.json():{}).then(setKwMap).catch(()=>{}),
+    fetch('data/category_en.json').then(r=>r.ok?r.json():{}).then(setKwMap).catch(()=>{})
+  ]);
+  if(getLang()==='en'){ await _ov; }
   const h = parseHash();
   if(h.path.length>0){ // deep link → skip the staged intro
     markBooted();

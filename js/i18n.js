@@ -56,5 +56,5 @@ export function isLocalCat(ko){ return _LOCALCATS.has(ko); }
    Korean keywords have no embedded English gloss, so EN mode looks them up here;
    untranslated keywords fall back to the Korean (progressive coverage). */
 let _KWEN = {};
-export function setKwMap(m){ if(m && typeof m==='object') _KWEN = m; }
+export function setKwMap(m){ if(m && typeof m==='object') _KWEN = Object.assign({}, _KWEN, m); }
 export function kwLabel(k){ return getLang()==='en' ? (_KWEN[k] || k) : k; }

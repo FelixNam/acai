@@ -7,7 +7,8 @@
    Data: data/keyword_index.json (built by tools/build_keyword_index.py).
    ============================================================ */
 import { esc } from '../ui.js';
-import { isLocalCat } from '../i18n.js';
+import { isLocalCat, kwLabel } from '../i18n.js';
+const kL=(k,max)=>{const l=kwLabel(k);return (max&&l.length>max)?l.slice(0,max)+'…':l;};
 import { keywordIndex, keywordTexts } from '../data.js';
 
 let KIDX = null;
@@ -30,7 +31,7 @@ function years(){
 function wHead(k){
   const r = rec(k), d = dynOf(k), t = d > 0.15 ? '상승' : d < -0.15 ? '하락' : '유지';
   return `<div class="kd-head">
-    <div class="kd-head-l"><div class="kd-eyb">${isLocalCat(k)?'선택한 키워드 · 자체 보완 분류 (GETTY AAT 외)':'선택한 키워드 · GETTY AAT'}</div><div class="kd-name">${isLocalCat(k)?'† ':''}${esc(k)}</div></div>
+    <div class="kd-head-l"><div class="kd-eyb">${isLocalCat(k)?'선택한 키워드 · 자체 보완 분류 (GETTY AAT 외)':'선택한 키워드 · GETTY AAT'}</div><div class="kd-name">${isLocalCat(k)?'† ':''}${esc(kwLabel(k))}</div></div>
     <div class="kd-head-r">
       <div class="kd-head-stats">총 <b>${r.n.toLocaleString()}</b>건 · 첫 등장 <b>${r.first}</b> · 정점 <b>${r.peak}</b></div>
       <div class="kd-dyn kd-dyn-${t}">최근 추세 <b>${t}</b> <span>${d>0?'+':''}${d}</span></div>
@@ -69,13 +70,13 @@ function wRelated(k){
   const spokes = nodes.map(o => `<line x1="${cx}" y1="${cy}" x2="${o.x.toFixed(1)}" y2="${o.y.toFixed(1)}" stroke="#9a82ec" stroke-width="1.3" opacity="0.5"/>`).join('');
   const dots = nodes.map(o => `<g class="kd-egn" data-k="${esc(o.c)}" style="cursor:pointer">
     <circle cx="${o.x.toFixed(1)}" cy="${o.y.toFixed(1)}" r="${o.rr.toFixed(1)}" fill="#9a82ec"/>
-    <text x="${o.x.toFixed(1)}" y="${(o.y+(o.y<cy?-o.rr-3:o.rr+10)).toFixed(1)}" text-anchor="middle" class="kd-egt">${esc(o.c.length>7?o.c.slice(0,7)+'…':o.c)}</text></g>`).join('');
+    <text x="${o.x.toFixed(1)}" y="${(o.y+(o.y<cy?-o.rr-3:o.rr+10)).toFixed(1)}" text-anchor="middle" class="kd-egt">${esc(kL(o.c,7))}</text></g>`).join('');
   // left column = related keywords listed vertically; right column = the network diagram
   const list = `<div class="kd-rel-list">${co.map(([c,n]) =>
-    `<button class="kd-co" data-k="${esc(c)}"><span>${esc(c)}</span><i>${n}</i></button>`).join('')}</div>`;
+    `<button class="kd-co" data-k="${esc(c)}"><span>${esc(kwLabel(c))}</span><i>${n}</i></button>`).join('')}</div>`;
   const net = `<div class="kd-rel-net"><svg viewBox="0 -16 300 220" class="kd-ego">${inter}${spokes}${dots}
       <circle cx="${cx}" cy="${cy}" r="13" fill="#534AB7"/>
-      <text x="${cx}" y="${cy+4}" text-anchor="middle" class="kd-egc">${esc(k.length>5?k.slice(0,5)+'…':k)}</text></svg></div>`;
+      <text x="${cx}" y="${cy+4}" text-anchor="middle" class="kd-egc">${esc(kL(k,5))}</text></svg></div>`;
   return wWrap('연관 주제 · 네트워크',
     `<div class="kd-rel">${list}${net}</div>`,
     '함께 자주 등장한 주제입니다. 왼쪽 목록을 누르면 그 주제로 이동하고, 오른쪽 그림은 그 무리 구조를 보여줍니다.', true);
@@ -142,8 +143,8 @@ function wHeatmap(){
     const max = Math.max(...ys.map(y => row.y[y]||0), 1);
     const cells = ys.map(y => { const c = row.y[y]||0, a = c ? (0.12 + 0.88*c/max) : 0;
       const kc = y==2020 ? (ri===0 ? ' kc kc-top' : ri===heat.length-1 ? ' kc kc-bot' : ' kc') : '';
-      return `<span class="kd-hc${kc}" title="${esc(row.k)} · ${y} · ${c}건" style="background:rgba(83,74,183,${a.toFixed(2)})"></span>`; }).join('');
-    return `<button class="kd-hr" data-k="${esc(row.k)}"><span class="kd-hr-l">${esc(row.k)}</span><span class="kd-hr-c">${cells}</span></button>`;
+      return `<span class="kd-hc${kc}" title="${esc(kwLabel(row.k))} · ${y} · ${c}건" style="background:rgba(83,74,183,${a.toFixed(2)})"></span>`; }).join('');
+    return `<button class="kd-hr" data-k="${esc(row.k)}"><span class="kd-hr-l">${esc(kwLabel(row.k))}</span><span class="kd-hr-c">${cells}</span></button>`;
   }).join('');
   return wWrap(`연도 × 키워드 히트맵`,
     `<div class="kd-heat">${rows}</div>
@@ -155,7 +156,7 @@ function wMomentum(){
   const up = [...elig].sort((a,b)=>b.dyn-a.dyn).slice(0,5);
   const dn = [...elig].sort((a,b)=>a.dyn-b.dyn).slice(0,5);
   const col = (label, arr, cls) => `<div class="kd-mom-col"><div class="kd-mom-h ${cls}">${label}</div>${
-    arr.map(d => `<button class="kd-mom-i" data-k="${esc(d.k)}"><span class="kd-rn">${esc(d.k)}</span>
+    arr.map(d => `<button class="kd-mom-i" data-k="${esc(d.k)}"><span class="kd-rn">${esc(kwLabel(d.k))}</span>
       <span class="kd-mom-v ${cls}">${d.dyn>0?'+':''}${d.dyn}</span></button>`).join('')}</div>`;
   return wWrap('상승세 / 하락세 키워드',
     `<div class="kd-mom">${col('↗ 상승세', up, 'up')}${col('↘ 하락세', dn, 'dn')}</div>`,
@@ -174,8 +175,8 @@ function wMonthly(el){
     const m = String(i+1), top = yd[m] || [];
     if(!top.length) return `<div class="kd-km-cell kd-km-empty"><span class="kd-km-m">${i+1}월</span><span class="kd-km-dash">—</span></div>`;
     const a = (0.10 + 0.5*top[0][1]/maxTop).toFixed(2);
-    const head = `<button class="kd-km-top" data-k="${esc(top[0][0])}" title="${esc(top[0][0])} · ${top[0][1]}건" style="background:rgba(83,74,183,${a})"><b>${esc(top[0][0])}</b><i>${top[0][1]}</i></button>`;
-    const rest = top.slice(1,3).map(([k]) => `<button class="kd-km-sub" data-k="${esc(k)}" title="${esc(k)}">${esc(k)}</button>`).join('');
+    const head = `<button class="kd-km-top" data-k="${esc(top[0][0])}" title="${esc(kwLabel(top[0][0]))} · ${top[0][1]}건" style="background:rgba(83,74,183,${a})"><b>${esc(kwLabel(top[0][0]))}</b><i>${top[0][1]}</i></button>`;
+    const rest = top.slice(1,3).map(([k]) => `<button class="kd-km-sub" data-k="${esc(k)}" title="${esc(kwLabel(k))}">${esc(kwLabel(k))}</button>`).join('');
     return `<div class="kd-km-cell"><span class="kd-km-m">${i+1}월</span>${head}<div class="kd-km-rest">${rest}</div></div>`;
   }).join('');
   return wWrap('월별 키워드',
@@ -185,7 +186,7 @@ function wMonthly(el){
 function wPick(el){
   const sort = el.dataset.sort || 'n', q = (el.dataset.q || '').trim();
   let list = KIDX.keywords;
-  if(q) list = list.filter(d => d.k.includes(q));
+  if(q) list = list.filter(d => d.k.includes(q) || kwLabel(d.k).toLowerCase().includes(q.toLowerCase()));
   if(sort === 'dyn') list = [...list].sort((a,b) => b.dyn - a.dyn);
   const maxN = KIDX.keywords[0].n;
   // each keyword is a rounded block; both its SIZE (font) and BLOCK COLOUR deepen with frequency
@@ -193,7 +194,7 @@ function wPick(el){
     const sz = (12.5 + 13*t).toFixed(1);          // bigger for more frequent
     const a  = (0.05 + 0.42*t).toFixed(3);        // darker purple block for more frequent
     const on = d.k === el.dataset.sel;
-    return `<button class="kd-cl${on?' on':''}" data-k="${esc(d.k)}" style="font-size:${sz}px${on?'':`;background:rgba(83,74,183,${a})`}">${isLocalCat(d.k)?'† ':''}${esc(d.k)}<sup>${d.n}</sup></button>`;
+    return `<button class="kd-cl${on?' on':''}" data-k="${esc(d.k)}" style="font-size:${sz}px${on?'':`;background:rgba(83,74,183,${a})`}">${isLocalCat(d.k)?'† ':''}${esc(kwLabel(d.k))}<sup>${d.n}</sup></button>`;
   }).join('') || '<span class="kd-empty">일치하는 키워드가 없습니다</span>';
   return `<div class="kd-pick">
     <div class="kd-pickbar">
