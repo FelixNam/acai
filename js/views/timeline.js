@@ -9,6 +9,8 @@ import { L, kwLabel } from '../i18n.js';
 import { mount } from '../app.js';
 import { meta } from '../data.js';
 import { keywordDashHTML, wireKeywordDash } from './keyworddash.js';
+/* VIKUS 정적 자산: 로컬은 vikus/, GitHub Pages에선 별도 리포(acai-vikus, 1024px 티어) */
+const VIKUS_BASE = location.hostname.endsWith('github.io') ? 'https://felixnam.github.io/acai-vikus/' : 'vikus/';
 
 const LEGEND = [
   ['Exhibition', '전시', '#4635B1'],
@@ -116,13 +118,13 @@ function viewerBlocksHTML(p){
         <h3 class="tl-vtitle">${L('전시 · 교육 · 문화행사','Exhibition · Education · Culture')}</h3>
         <button class="tl-era" id="${p}Era">${L('↤ 2000–2009 보기','↤ View 2000–2009')}</button>
       </div>
-      <div class="tl-vbody"><iframe id="${p}Frame" class="tl-frame" title="${L('ACAI 타임라인 — 전시·교육·문화행사','ACAI timeline — Exhibition · Education · Culture')}" loading="lazy" data-src="vikus/index.html"></iframe></div>
+      <div class="tl-vbody"><iframe id="${p}Frame" class="tl-frame" title="${L('ACAI 타임라인 — 전시·교육·문화행사','ACAI timeline — Exhibition · Education · Culture')}" loading="lazy" data-src="${VIKUS_BASE}index.html"></iframe></div>
     </section>
     <section class="tl-vblock">
       <div class="tl-vhead">
         <h3 class="tl-vtitle">${L('공모','Open Call')}</h3>
       </div>
-      <div class="tl-vbody"><iframe id="${p}FrameOpc" class="tl-frame" title="${L('ACAI 타임라인 — 공모','ACAI timeline — Open Call')}" loading="lazy" data-src="vikus/index.html?config=data-opencall/config.json"></iframe></div>
+      <div class="tl-vbody"><iframe id="${p}FrameOpc" class="tl-frame" title="${L('ACAI 타임라인 — 공모','ACAI timeline — Open Call')}" loading="lazy" data-src="${VIKUS_BASE}index.html?config=data-opencall/config.json"></iframe></div>
     </section>`;
 }
 
@@ -199,7 +201,7 @@ export function wireEra(frame, btn, kick){
   btn.addEventListener('click', ()=>{
     const pre = btn.dataset.era !== 'pre';
     btn.dataset.era = pre ? 'pre' : 'main';
-    frame.src = pre ? 'vikus/index.html?config=data-pre/config.json' : 'vikus/index.html';
+    frame.src = pre ? VIKUS_BASE+'index.html?config=data-pre/config.json' : VIKUS_BASE+'index.html';
     btn.textContent = pre ? L('2010년 이후 보기 ↦','View 2010+ ↦') : L('↤ 2000–2009 보기','↤ View 2000–2009');
     [900,2200,3800].forEach(t=>setTimeout(()=>kick&&kick(),t));
   });
