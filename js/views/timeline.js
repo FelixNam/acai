@@ -10,7 +10,7 @@ import { mount } from '../app.js';
 import { meta } from '../data.js';
 import { keywordDashHTML, wireKeywordDash } from './keyworddash.js';
 /* VIKUS 정적 자산: 로컬은 vikus/, GitHub Pages에선 별도 리포(acai-vikus, 1024px 티어) */
-const VIKUS_BASE = location.hostname.endsWith('github.io') ? 'https://felixnam.github.io/acai-vikus/' : 'vikus/';
+const VIKUS_BASE = (location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'vikus/' : 'https://felixnam.github.io/acai-vikus/';
 
 const LEGEND = [
   ['Exhibition', '전시', '#4635B1'],
