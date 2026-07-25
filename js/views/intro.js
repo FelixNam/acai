@@ -199,8 +199,8 @@ function keysZone(M){
     <button class="pill keys-back" data-gomain>← ENTRANCE</button>
     <header class="tl-page-head">
       <div class="tl-kick"><span class="tl-dot"></span>WHEN × WHAT — TIMELINE</div>
-      <h1 class="tl-title">주제 × 타임라인</h1>
-      <p class="tl-lead">아카이브를 두 가지로 살펴봅니다 — <b>① 연도·월별 주제 탐색기</b>로 주제의 흐름을, <b>② VIKUS 타임라인</b>으로 개별 전시·프로그램·공모를 둘러봅니다.</p>
+      <h1 class="tl-title">${L('주제 × 타임라인','Theme × Timeline')}</h1>
+      <p class="tl-lead">${L('아카이브를 두 가지로 살펴봅니다 — <b>① 연도·월별 주제 탐색기</b>로 주제의 흐름을, <b>② VIKUS 타임라인</b>으로 개별 전시·프로그램·공모를 둘러봅니다.', 'Explore the archive two ways — <b>① the Theme Explorer by Year & Month</b> for the flow of themes, and <b>② the VIKUS Timeline</b> for individual exhibitions, programs, and open calls.')}</p>
     </header>
     ${explorerFeatureHTML(M)}
     ${viewersFeatureHTML('keys')}
