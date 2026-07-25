@@ -46,7 +46,7 @@ function kxSayHTML(M,g,y){
   const chips=r.list.slice(0,3).map((x,i)=>`<a class="kx-chip${i===0?' is-1':''}" href="#/search?q=${encodeURIComponent(x.k)}">${esc(kwLabel(x.k))}<i>${x.n}</i></a>`).join('');
   return `<div class="kx-say">
     <p class="kx-say-pre">${L(`<b class="kx-yr">${y}</b>년 <b>${esc(gl)}</b>의 대표 ${dl}는`, `<b>${esc(gl)}</b>'s defining ${dl} in <b class="kx-yr">${y}</b> was`)}</p>
-    ${ r.value ? `<a class="kx-say-kw" href="#/search?q=${encodeURIComponent(r.value)}" title="${L('이 키워드로 검색','Search this keyword')}">${esc(kwLabel(r.value))}</a>
+    ${ r.value ? `<a class="kx-say-kw" href="#/search?q=${encodeURIComponent(r.value)}" title="${L('이 주제로 검색','Search this theme')}">${esc(kwLabel(r.value))}</a>
       <p class="kx-say-post">${tail} <span class="kx-say-n">${L(`· 활동 ${r.total.toLocaleString()}건`, `· ${r.total.toLocaleString()} activities`)}</span></p>`
       : `<p class="kx-say-kw kx-empty">${L('데이터 없음','No data')}</p>` }
     <div class="kx-chips">${chips}</div>
@@ -128,12 +128,12 @@ function viewerBlocksHTML(p){
     </section>`;
 }
 
-/* FEATURE 1 — 연도·월별 키워드 탐색기: its description + the explorer, in one box. */
+/* FEATURE 1 — 연도·월별 주제 탐색기: its description + the explorer, in one box. */
 export function explorerFeatureHTML(M){
   return `<section class="tl-feature">
     <div class="tl-feature-head">
-      <h2 class="tl-feat-title"><span class="tl-feat-no">1</span>${L('연도·월별 키워드 탐색기','Keyword Explorer by Year & Month')}</h2>
-      <p class="tl-feat-desc">${L('ACAI 아카이브를 <b>주제 키워드(Getty AAT)</b>의 흐름으로 봅니다. 각 <b>연도 카드</b>는 그 해를 대표하는 키워드 <b>Top 3</b>과 활동량을, 카드를 누르면 그 해의 대표 주제와 <b>월별</b> 키워드까지 보여줍니다. 키워드를 누르면 검색으로 이어집니다.', 'View the ACAI archive as a flow of <b>thematic keywords (Getty AAT)</b>. Each <b>year card</b> shows that year\'s <b>Top 3</b> keywords and activity volume; click a card to see the year\'s defining themes and even its <b>monthly</b> keywords. Click a keyword to jump to search.')}</p>
+      <h2 class="tl-feat-title"><span class="tl-feat-no">1</span>${L('연도·월별 주제 탐색기','Theme Explorer by Year & Month')}</h2>
+      <p class="tl-feat-desc">${L('ACAI 아카이브를 <b>주제(Getty AAT)</b>의 흐름으로 봅니다. 각 <b>연도 카드</b>는 그 해를 대표하는 주제 <b>Top 3</b>과 활동량을, 카드를 누르면 그 해의 대표 주제와 <b>월별</b> 주제까지 보여줍니다. 주제를 누르면 검색으로 이어집니다.', 'View the ACAI archive as a flow of <b>themes (Getty AAT)</b>. Each <b>year card</b> shows that year\'s <b>Top 3</b> themes and activity volume; click a card to see the year\'s defining themes and even its <b>monthly</b> themes. Click a theme to jump to search.')}</p>
     </div>
     <div class="tl-feature-body">${keywordDashHTML()}</div>
   </section>`;
@@ -146,7 +146,7 @@ export function viewersFeatureHTML(p='tl'){
   return `<section class="tl-feature">
     <div class="tl-feature-head">
       <h2 class="tl-feat-title"><span class="tl-feat-no">2</span>${L('VIKUS 타임라인','VIKUS Timeline')}</h2>
-      <p class="tl-feat-desc">${L('개별 전시·프로그램·공모를 <b>VIKUS Viewer</b>로 시각화한 영역입니다. <b>상단 대각선 키워드(Getty AAT)</b>로 거르고(여러 개 동시 선택 가능), <b>가로 연도축</b>을 따라 타일을 훑어봅니다. 타일을 누르면 상세가 열리고, 스크롤로 확대·축소합니다. <b>전시·프로그램</b>과 <b>공모</b>를 각각 탐색하세요.', 'A space that visualizes individual exhibitions, programs, and open calls with the <b>VIKUS Viewer</b>. Filter by the <b>diagonal keywords (Getty AAT)</b> at the top (multiple selections allowed) and scan tiles along the <b>horizontal year axis</b>. Click a tile to open its details; scroll to zoom in and out. Explore <b>Exhibitions · Programs</b> and <b>Open Calls</b> separately.')}</p>
+      <p class="tl-feat-desc">${L('개별 전시·프로그램·공모를 <b>VIKUS Viewer</b>로 시각화한 영역입니다. <b>상단 대각선 주제(Getty AAT)</b>로 거르고(여러 개 동시 선택 가능), <b>가로 연도축</b>을 따라 타일을 훑어봅니다. 타일을 누르면 상세가 열리고, 스크롤로 확대·축소합니다. <b>전시·프로그램</b>과 <b>공모</b>를 각각 탐색하세요.', 'A space that visualizes individual exhibitions, programs, and open calls with the <b>VIKUS Viewer</b>. Filter by the <b>diagonal themes (Getty AAT)</b> at the top (multiple selections allowed) and scan tiles along the <b>horizontal year axis</b>. Click a tile to open its details; scroll to zoom in and out. Explore <b>Exhibitions · Programs</b> and <b>Open Calls</b> separately.')}</p>
       <div class="tl-legend tl-feat-legend">${legend}</div>
     </div>
     <div class="tl-feature-body tl-viewers">${viewerBlocksHTML(p)}</div>
@@ -159,8 +159,8 @@ export async function timelineView(){
   mount(`
     <header class="tl-page-head">
       <div class="tl-kick"><span class="tl-dot"></span>${L('언제 × 무엇 — 연표','WHEN × WHAT — Timeline')}</div>
-      <h1 class="tl-title">${L('키워드 × 타임라인','Keyword × Timeline')}</h1>
-      <p class="tl-lead">${L('아카이브를 두 가지로 살펴봅니다 — <b>① 연도·월별 키워드 탐색기</b>로 주제의 흐름을, <b>② VIKUS 타임라인</b>으로 개별 전시·프로그램·공모를 둘러봅니다.', 'Explore the archive two ways — <b>① the Keyword Explorer by Year & Month</b> for the flow of themes, and <b>② the VIKUS Timeline</b> for individual exhibitions, programs, and open calls.')}</p>
+      <h1 class="tl-title">${L('주제 × 타임라인','Theme × Timeline')}</h1>
+      <p class="tl-lead">${L('아카이브를 두 가지로 살펴봅니다 — <b>① 연도·월별 주제 탐색기</b>로 주제의 흐름을, <b>② VIKUS 타임라인</b>으로 개별 전시·프로그램·공모를 둘러봅니다.', 'Explore the archive two ways — <b>① the Theme Explorer by Year & Month</b> for the flow of themes, and <b>② the VIKUS Timeline</b> for individual exhibitions, programs, and open calls.')}</p>
     </header>
     ${explorerFeatureHTML(M)}
     ${viewersFeatureHTML('tl')}`, 'tl-page');

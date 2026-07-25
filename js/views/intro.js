@@ -193,14 +193,14 @@ function eventZone(M){
   </section>`;
 }
 
-/* ---- keywords zone (left of main): the REAL timeline lives here, in-place ---- */
+/* ---- themes zone (left of main): the REAL timeline lives here, in-place ---- */
 function keysZone(M){
   return `<section class="zone-sec sec-keys">
     <button class="pill keys-back" data-gomain>← ENTRANCE</button>
     <header class="tl-page-head">
       <div class="tl-kick"><span class="tl-dot"></span>WHEN × WHAT — TIMELINE</div>
-      <h1 class="tl-title">키워드 × 타임라인</h1>
-      <p class="tl-lead">아카이브를 두 가지로 살펴봅니다 — <b>① 연도·월별 키워드 탐색기</b>로 주제의 흐름을, <b>② VIKUS 타임라인</b>으로 개별 전시·프로그램·공모를 둘러봅니다.</p>
+      <h1 class="tl-title">주제 × 타임라인</h1>
+      <p class="tl-lead">아카이브를 두 가지로 살펴봅니다 — <b>① 연도·월별 주제 탐색기</b>로 주제의 흐름을, <b>② VIKUS 타임라인</b>으로 개별 전시·프로그램·공모를 둘러봅니다.</p>
     </header>
     ${explorerFeatureHTML(M)}
     ${viewersFeatureHTML('keys')}
@@ -213,7 +213,7 @@ function stageHTML(M){
     <div class="world">
       <section class="zone-sec sec-main">
         <div class="ticket-row">
-          <div class="ticket t0"><div class="ticket-inner">${ticketBack(0)}${frontFacet({accent:'#e9dfc9',ink:'#1c1726',ghost:'KEY',ghostLight:false,code:'FACET 01 · TIMELINE',big:'BY<br>KEYWORD',stub:'N° 01 · TAG · GETTY AAT',arrow:'←',logo:undefined,dark:false})}</div></div>
+          <div class="ticket t0"><div class="ticket-inner">${ticketBack(0)}${frontFacet({accent:'#e9dfc9',ink:'#1c1726',ghost:'KEY',ghostLight:false,code:'FACET 01 · TIMELINE',big:'BY<br>THEME',stub:'N° 01 · TAG · GETTY AAT',arrow:'←',logo:undefined,dark:false})}</div></div>
           <div class="ticket t1"><div class="ticket-inner">${ticketBack(1)}${frontFacet({accent:'#5b3ba6',ink:'#fff',ghost:'ACT',code:'FACET 02 · RESOURCES',big:'ART<br>ACTIVITY',stub:`N° 02 · PART · ${num(M.counts.participant)}`,arrow:'↓',logo:{leaf:'#C9BCF8',berry:'#fff',mid:'#fff'},dark:true})}</div></div>
           <div class="ticket t2"><div class="ticket-inner">${ticketBack(2)}${frontFacet({accent:'#9a82ec',ink:'#2a1652',ghost:'EVT',code:'FACET 03 · EVENTS',big:'ART<br>EVENT',stub:`N° 03 · EVT · ${num(M.event_total)}`,arrow:'→',logo:{leaf:'#3E8E4F',berry:'#5B3BA6',mid:'#6A4BC0'},dark:false})}</div></div>
         </div>
@@ -299,7 +299,7 @@ function wireStage(){
   // back buttons in facet zones
   stageEl.querySelectorAll('[data-gomain]').forEach(b=>b.addEventListener('click', goMain));
 }
-const CRUMB = {keys:'FACET 01 / KEYWORDS', activity:'FACET 02 / ART ACTIVITY', event:'FACET 03 / ARTEVENT'};
+const CRUMB = {keys:'FACET 01 / THEMES', activity:'FACET 02 / ART ACTIVITY', event:'FACET 03 / ARTEVENT'};
 let tearing = false;
 function bindTear(sel, zone){
   const ticket = stageEl.querySelector(sel);
