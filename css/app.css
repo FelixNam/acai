@@ -22,6 +22,8 @@
   --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   /* layout */
   --chrome-h: 74px;
+  /* semantic z-index scale (bar → floating control → overlay panel → modal → toast) */
+  --z-chrome:40; --z-float:45; --z-overlay:200; --z-modal:1000; --z-toast:1200;
   --maxw: 1320px;
   --shadow: 0 18px 40px -26px rgba(28,23,38,.55);
   --shadow-lg: 0 28px 64px -24px rgba(28,23,38,.6);
@@ -59,8 +61,8 @@ body.boot{background:#1c1726}
 
 /* ---- top chrome ---- */
 .chrome{
-  position:fixed; top:0; left:0; right:0; z-index:40; height:var(--chrome-h);
-  display:flex; align-items:center; gap:18px;
+  position:fixed; top:0; left:0; right:0; z-index:var(--z-chrome); height:var(--chrome-h);
+  display:flex; align-items:center; gap:clamp(10px,1.4vw,18px);
   padding:0 clamp(16px,4vw,46px);
   background:linear-gradient(180deg, rgba(190,183,203,.92), rgba(190,183,203,0));
   backdrop-filter:saturate(120%) blur(2px);
@@ -74,11 +76,17 @@ body.boot{background:#1c1726}
 .chrome-words i{font-family:var(--mono); font-style:normal; font-weight:400; font-size:10px; letter-spacing:.16em; color:#6a6280; margin-top:4px}
 /* ---- nav as analog-arcade cartridge tabs: sharp box, chunky border, hard shadow, press-on-click ---- */
 /* single row that scrolls horizontally if it can't fit, so bigger tabs never wrap-clip under the fixed header */
-.chrome-nav{display:flex; gap:6px; margin-left:auto; flex-wrap:nowrap; overflow-x:auto; -ms-overflow-style:none; scrollbar-width:none}
+.chrome-nav{
+  /* margin-left:auto right-aligns the row when it fits; justify-content:flex-end would make the
+     leading tabs unreachable once the row overflows (flexbox clips the start, not the end). */
+  display:flex; gap:6px; flex:0 1 auto; min-width:0; margin-left:auto; justify-content:flex-start;
+  flex-wrap:nowrap; overflow-x:auto; overscroll-behavior-x:contain;
+  -ms-overflow-style:none; scrollbar-width:none;
+}
 .chrome-nav::-webkit-scrollbar{display:none}
 .chrome-nav a{
   font-family:var(--mono); font-weight:700; font-size:13px; letter-spacing:.04em;
-  color:var(--ink-2); padding:9px 12px; border-radius:0; white-space:nowrap;
+  color:var(--ink-2); padding:9px 12px; border-radius:0; white-space:nowrap; flex:none;
   border:2px solid #241c333a; background:#f5f1e8b0;
   box-shadow:2px 2px 0 #241c3320;
   transition:transform .07s ease, box-shadow .07s ease, background .15s, color .15s, border-color .15s;
@@ -86,27 +94,67 @@ body.boot{background:#1c1726}
 .chrome-nav a:hover{background:#fffdf7; color:var(--ink-2); border-color:var(--ink-2); box-shadow:3px 3px 0 var(--purple); transform:translate(-1px,-1px)}
 .chrome-nav a.on{background:var(--ink-2); color:var(--paper-3); border-color:var(--ink-2); box-shadow:2px 2px 0 var(--purple), inset 0 0 0 2px #ffffff1f}
 .chrome-nav a:active{transform:translate(2px,2px); box-shadow:0 0 0 var(--ink-2)}
-.chrome-crumb{font-family:var(--mono); font-weight:700; font-size:10.5px; letter-spacing:.14em; color:var(--green-d); flex:none}
-/* give the (now larger) 9-tab nav room on mid screens: drop the breadcrumb, then the wordmark subtitle.
-   the active-tab highlight already conveys location, so these are safe to hide. */
-.lang-toggle{position:fixed; top:14px; right:16px; z-index:1200; font-family:var(--mono); font-weight:700; font-size:12px; letter-spacing:.08em; color:var(--ink-2); background:var(--green-l,#eaf3df); border:1.5px solid var(--ink-2); box-shadow:2px 2px 0 var(--ink-2); padding:7px 11px; cursor:pointer; transition:transform .07s, box-shadow .07s, background .15s}
-.lang-toggle:hover{background:var(--green-d,#2c7a3f); color:#fff; transform:translate(-1px,-1px); box-shadow:3px 3px 0 var(--ink-2)}
-.lang-toggle:active{transform:translate(2px,2px); box-shadow:0 0 0 var(--ink-2)}
-@media(max-width:560px){ .lang-toggle{top:10px; right:10px; padding:5px 8px; font-size:11px} }
-@media(max-width:1600px){ .chrome-crumb{display:none} }
+.chrome-nav a:focus-visible{outline:2px solid var(--purple); outline-offset:2px}
+
+/* location label — sits beside the wordmark (identity + where you are on the left, actions on the right).
+   ink-coloured for contrast on the lilac bar; the green rule carries the accent. */
+.chrome-crumb{
+  flex:0 1 auto; min-width:0; max-width:30ch;
+  font-family:var(--mono); font-weight:700; font-size:10.5px; letter-spacing:.14em;
+  color:var(--ink-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.chrome-crumb::before{
+  content:''; display:inline-block; width:14px; height:2px; margin-right:9px;
+  vertical-align:middle; background:var(--green-d);
+}
+
+/* KR | EN segmented control. Same arcade geometry as the nav chips (2px rule + hard offset shadow)
+   so it reads as part of the bar, but the selected half is filled with the brand purple — nav
+   active state is ink, actions are purple. Shows both languages: no "current or target?" guessing. */
+.lang-seg{
+  display:inline-flex; flex:none; align-items:stretch; overflow:hidden;
+  border:2px solid var(--ink-2); background:var(--paper-3);
+  box-shadow:2px 2px 0 var(--ink-2);
+}
+.lang-b{
+  font-family:var(--mono); font-weight:700; font-size:11.5px; letter-spacing:.08em; line-height:1;
+  color:var(--ink-2); background:transparent; border:0; padding:8px 11px; cursor:pointer;
+  transition:background .16s ease, color .16s ease;
+}
+.lang-b + .lang-b{box-shadow:inset 2px 0 0 var(--ink-2)}
+.lang-b:hover:not(.is-on){background:var(--lilac-3)}
+.lang-b.is-on{background:var(--purple); color:#fff; cursor:default}
+.lang-b:focus-visible{outline:2px solid var(--purple); outline-offset:2px; position:relative; z-index:1}
+/* the intro screen hides the chrome bar, so the control floats there — and only there */
+.lang-seg-float{
+  position:fixed; top:14px; right:16px; z-index:var(--z-float);
+  box-shadow:2px 2px 0 rgba(255,255,255,.16);   /* the intro screen is near-black: ink shadow would vanish */
+}
+body.has-chrome .lang-seg-float{display:none}
+
+/* responsive: structural collapse, in this order — location label, subtitle, then the nav scrolls.
+   The English tab labels run ~25% wider than the Korean ones (834px vs 745px for the 9 tabs), so the
+   EN bar gives up the location label and a little tab padding earlier. */
+@media(max-width:1180px){ .chrome-crumb{display:none} }
+@media(max-width:1500px){
+  html[lang="en"] .chrome-crumb{display:none}
+  html[lang="en"] .chrome-nav a{padding:9px 10px}
+}
 @media(max-width:1024px){ .chrome-words i{display:none} }
 @media(max-width:760px){
   .chrome{gap:10px}
-  .chrome-words i{display:none}
-  .chrome-crumb{display:none}
-  .chrome-nav{flex-wrap:nowrap; overflow-x:auto; -ms-overflow-style:none; scrollbar-width:none; -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent)}
-  .chrome-nav::-webkit-scrollbar{display:none}
-  .chrome-nav a{padding:8px 9px; font-size:11.5px; white-space:nowrap}
-  .chrome-nav{-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent)}
+  .chrome-nav{-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent); mask-image:linear-gradient(90deg,#000 88%,transparent)}
+  .chrome-nav a{padding:8px 9px; font-size:11.5px}
+  .lang-b{padding:7px 8px; font-size:11px}
 }
+@media(max-width:560px){ .lang-seg-float{top:10px; right:10px} }
 @media(max-width:420px){
   .chrome-words b, .chrome-words b.acai-wm{font-size:22px}
   .chrome-brand .logo{width:34px;height:31px}
+}
+@media(prefers-reduced-motion:reduce){
+  .chrome-nav a, .lang-b{transition:background .01s linear, color .01s linear}
+  .chrome-nav a:hover, .chrome-nav a:active{transform:none}
 }
 
 /* ---- app shell ---- */

@@ -44,13 +44,15 @@ function buildNav(){
   const nav = document.getElementById('chrome-nav');
   nav.innerHTML = NAV.map(n=>`<a href="${n.hash}" data-nav="${n.key}">${L(n.ko,n.en)}</a>`).join('');
 }
-/* fixed top-right language toggle — always visible (incl. the intro/home screen) */
+/* segmented KR|EN control — one instance in the chrome bar, one floating for the intro screen.
+   Shows both languages with the active one filled, so the control never reads ambiguously. */
 function paintLangToggle(){
-  const t = document.getElementById('langToggle'); if(!t) return;
-  const en = getLang()==='en';
-  t.textContent = en ? 'KR' : 'EN';
-  t.dataset.next = en ? 'ko' : 'en';
-  t.title = en ? '한국어로 보기' : 'View in English';
+  const cur = getLang();
+  document.querySelectorAll('.lang-b[data-setlang]').forEach(b => {
+    const on = b.dataset.setlang === cur;
+    b.classList.toggle('is-on', on);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
 }
 /* language toggle → persist + re-render current view + relabel chrome */
 export function applyLang(l){
@@ -61,16 +63,33 @@ export function applyLang(l){
   route();
 }
 document.addEventListener('click', (e)=>{
-  const t = e.target.closest('#langToggle'); if(!t) return;
+  const t = e.target.closest('.lang-b[data-setlang]'); if(!t) return;
   e.preventDefault();
-  applyLang(t.dataset.next);
+  if(t.dataset.setlang !== getLang()) applyLang(t.dataset.setlang);
 });
 function markNav(key){
-  document.querySelectorAll('#chrome-nav a').forEach(a=>a.classList.toggle('on', a.dataset.nav===key));
+  const nav = document.getElementById('chrome-nav');
+  let active = null;
+  nav.querySelectorAll('a').forEach(a=>{
+    const on = a.dataset.nav===key;
+    a.classList.toggle('on', on);
+    if(on) active = a;
+  });
+  // 9 tabs overflow on small screens: keep the current one in view (scrollLeft, so the page never jumps).
+  // deferred two frames — on first paint the bar may still be hidden/unlaid-out, so widths read as 0.
+  const centerActive = () => {
+    if(!active || nav.scrollWidth <= nav.clientWidth) return;
+    nav.scrollLeft = Math.max(0, Math.min(nav.scrollWidth - nav.clientWidth,
+      active.offsetLeft - (nav.clientWidth - active.offsetWidth)/2));
+  };
+  // instant, and again after the view mounts (a heavy render can reflow the bar and reset scrollLeft)
+  requestAnimationFrame(centerActive);
+  setTimeout(centerActive, 350);
 }
 export function showChrome(on){
   const c = document.getElementById('chrome');
   if(on){ c.hidden=false; } else { c.hidden=true; }
+  document.body.classList.toggle('has-chrome', !!on);   // lets CSS hide the floating lang control
 }
 
 /* ---- view loaders (dynamic) ---- */
