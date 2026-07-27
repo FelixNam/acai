@@ -144,7 +144,7 @@ const ROLE_EN = {'참여작가':'artist','작가':'artist','큐레이터':'curat
 export const roleHint = r => r && ROLE_EN[r] ? `${r}` : (r||'');
 
 /* nav link active state */
-export function setCrumb(text){ const c=document.getElementById('crumb'); if(c) c.textContent=text; }
+export function setCrumb(text){ const c=document.getElementById('crumb'); if(c){ c.textContent=text; c.title=text; } }  // title: long labels ellipsize in the bar
 
 /* ---- 8-bit pixel burst: little squares that pop + fall from a screen point (button clicks) ---- */
 const BURST_COLORS = ['#5b3ba6','#3e8e4f','#e0a33d','#9a82ec','#241c33','#6a4bc0'];
