@@ -117,10 +117,13 @@ export function mount(html, cls='page'){
 async function route(){
   const {path, query} = parseHash();
 
-  // home / main entrance (intro.home handles the staged boot once)
-  if(path.length===0){
+  // home / main entrance (intro.home handles the staged boot once).
+  // #/zone/<keys|activity|event> is the same page opened directly at one facet zone, so a refresh
+  // inside a zone stays there instead of replaying the opening sequence.
+  const ZONES = ['keys','activity','event'];
+  if(path.length===0 || (path[0]==='zone' && ZONES.includes(path[1]))){
     markNav('browse'); setCrumb('입구');
-    await home(); return;
+    await home(path[0]==='zone' ? path[1] : null); return;
   }
   showChrome(true);
   const head = path[0];

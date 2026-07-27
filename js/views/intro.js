@@ -248,7 +248,7 @@ function stageHTML(M){
 }
 
 let stageEl = null;
-export async function home(){
+export async function home(zone){
   const M = await meta();
   app.innerHTML = stageHTML(M);
   stageEl = app.querySelector('.stage');
@@ -276,6 +276,22 @@ export async function home(){
     if(!stageEl.isConnected) return;
     booted = true;
     toMain();
+  } else if(zone){
+    // deep link straight into a zone (refresh inside a zone lands here) — no opening sequence and
+    // no slide: the world is placed at the zone with transitions suppressed for one frame.
+    booted = true;
+    toMain(true);
+    const el = stageEl;
+    el.classList.add('no-zone-anim');
+    el.classList.remove('zone-main');
+    el.classList.add('zone-'+zone);
+    setCrumb(CRUMB[zone] || 'ENTRANCE');
+    // release the transition lock FIRST (and unconditionally): the tear→slide motion must stay alive
+    // for the rest of the session even if booting the embedded viewer below fails.
+    const unlock = () => el.classList.remove('no-zone-anim');
+    requestAnimationFrame(()=>requestAnimationFrame(unlock));
+    setTimeout(unlock, 400);
+    if(zone==='keys'){ try { bootKeysTimeline(); } catch(e){ console.warn('keys viewer boot failed', e); } }
   } else {
     stageEl.classList.add('stage-in');   // re-entering the entrance from a route (e.g. About → by activity → ↑ ENTRANCE) → fade/slide in, not an abrupt cut
     toMain(true);
@@ -302,6 +318,15 @@ function wireStage(){
   stageEl.querySelectorAll('[data-gomain]').forEach(b=>b.addEventListener('click', goMain));
 }
 const CRUMB = {keys:'FACET 01 / THEMES', activity:'FACET 02 / ART ACTIVITY', event:'FACET 03 / ARTEVENT'};
+/* keep the URL in step with the visible zone so a refresh reopens the same zone.
+   replaceState (not a hash assignment) → no hashchange, so the stage is never rebuilt mid-transition. */
+function syncZoneUrl(zone){
+  try { history.replaceState(null, '', zone ? `#/zone/${zone}` : '#/'); } catch(e){}
+}
+/* mobile stacks the zones in normal flow, so a zone switch must also reset the scroll position */
+function resetScrollIfStacked(){
+  if(window.matchMedia('(max-width:760px)').matches) window.scrollTo({top:0, behavior:'auto'});
+}
 let tearing = false;
 function bindTear(sel, zone){
   const ticket = stageEl.querySelector(sel);
@@ -319,6 +344,8 @@ function bindTear(sel, zone){
       stageEl.classList.remove('zone-main');
       stageEl.classList.add('zone-'+zone);
       if(zone==='keys') bootKeysTimeline();   // lazy-boot the embedded VIKUS on first reveal
+      resetScrollIfStacked();
+      syncZoneUrl(zone);
       tearing = false;
     }, 720);
   });
@@ -363,5 +390,7 @@ function goMain(){
   stageEl.classList.remove('zone-activity','zone-event','zone-keys');
   stageEl.classList.add('zone-main');
   stageEl.querySelectorAll('.ticket.tearing').forEach(t=>t.classList.remove('tearing'));
+  resetScrollIfStacked();
+  syncZoneUrl(null);
   setCrumb('ENTRANCE');
 }

@@ -18,6 +18,7 @@
 }
 .stage{position:relative; height:100vh; overflow:clip; perspective:2400px}
 .world{position:absolute; top:0; left:0; width:200vw; height:200vh; transition:transform 950ms cubic-bezier(.76,0,.18,1)}
+.stage.no-zone-anim .world{transition:none}   /* deep link opens a zone in place — the slide is for tearing only */
 .stage.zone-activity .world{transform:translate(0,-100vh)}
 .stage.zone-event .world{transform:translate(-100vw,0)}
 .stage.zone-keys .world{transform:translate(100vw,0)}
@@ -157,9 +158,12 @@
   .stage{height:auto; overflow:visible}
   .world{position:relative; width:100%; height:auto; transform:none !important}
   .zone-sec{position:relative; width:100%; height:auto; top:auto !important; left:auto !important}
-  .sec-activity,.sec-event{display:none}
+  /* stacked layout: exactly one zone is visible at a time (the themes zone was missing here, so it
+     used to render underneath the entrance) */
+  .sec-activity,.sec-event,.sec-keys{display:none}
   .stage.zone-activity .sec-activity,.stage.zone-event .sec-event{display:block}
-  .stage.zone-activity .sec-main,.stage.zone-event .sec-main{display:none}
+  .stage.zone-keys .sec-keys{display:flex}
+  .stage.zone-activity .sec-main,.stage.zone-event .sec-main,.stage.zone-keys .sec-main{display:none}
   .ticket-row{flex-direction:column; gap:16px}
   .ticket{height:auto; width:min(196px,90vw)}
   .stage.phase-loading .ticket{height:auto; min-height:120px}
