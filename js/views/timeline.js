@@ -128,11 +128,11 @@ function viewerBlocksHTML(p){
     </section>`;
 }
 
-/* FEATURE 1 — 연도·월별 주제 탐색기: its description + the explorer, in one box. */
+/* FEATURE 1 — 시간별 주제 탐색기: its description + the explorer, in one box. */
 export function explorerFeatureHTML(M){
   return `<section class="tl-feature">
     <div class="tl-feature-head">
-      <h2 class="tl-feat-title"><span class="tl-feat-no">1</span>${L('연도·월별 주제 탐색기','Theme Explorer by Year & Month')}</h2>
+      <h2 class="tl-feat-title"><span class="tl-feat-no">1</span>${L('시간별 주제 탐색기','Theme Explorer by Timeline')}</h2>
       <p class="tl-feat-desc">${L('ACAI 아카이브를 <b>주제(Getty AAT)</b>의 흐름으로 봅니다. 각 <b>연도 카드</b>는 그 해를 대표하는 주제 <b>Top 3</b>과 활동량을, 카드를 누르면 그 해의 대표 주제와 <b>월별</b> 주제까지 보여줍니다. 주제를 누르면 검색으로 이어집니다.', 'View the ACAI archive as a flow of <b>themes (Getty AAT)</b>. Each <b>year card</b> shows that year\'s <b>Top 3</b> themes and activity volume; click a card to see the year\'s defining themes and even its <b>monthly</b> themes. Click a theme to jump to search.')}</p>
     </div>
     <div class="tl-feature-body">${keywordDashHTML()}</div>
@@ -160,7 +160,7 @@ export async function timelineView(){
     <header class="tl-page-head">
       <div class="tl-kick"><span class="tl-dot"></span>${L('언제 × 무엇 — 연표','WHEN × WHAT — Timeline')}</div>
       <h1 class="tl-title">${L('주제 × 타임라인','Theme × Timeline')}</h1>
-      <p class="tl-lead">${L('아카이브를 두 가지로 살펴봅니다 — <b>① 연도·월별 주제 탐색기</b>로 주제의 흐름을, <b>② VIKUS 타임라인</b>으로 개별 전시·프로그램·공모를 둘러봅니다.', 'Explore the archive two ways — <b>① the Theme Explorer by Year & Month</b> for the flow of themes, and <b>② the VIKUS Timeline</b> for individual exhibitions, programs, and open calls.')}</p>
+      <p class="tl-lead">${L('아카이브를 두 가지로 살펴봅니다 — <b>① 시간별 주제 탐색기</b>로 주제의 흐름을, <b>② VIKUS 타임라인</b>으로 개별 전시·프로그램·공모를 둘러봅니다.', 'Explore the archive two ways — <b>① the Theme Explorer by Timeline</b> for the flow of themes, and <b>② the VIKUS Timeline</b> for individual exhibitions, programs, and open calls.')}</p>
     </header>
     ${explorerFeatureHTML(M)}
     ${viewersFeatureHTML('tl')}`, 'tl-page');
