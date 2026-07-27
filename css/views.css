@@ -497,20 +497,23 @@
 /* ── THEMES: a near-borderless two-row table. Row 1 = the extracted keyword phrase, row 2 = the
    Getty AAT theme it was matched to. grid-auto-flow:column keeps each phrase/theme pair in one
    aligned column; the row labels sit in the first (sticky) column so they survive horizontal scroll. */
+.dt-themes{margin-top:clamp(18px,2.6vh,32px)}
 .dt-themes .th-table{margin-top:4px}
 .th-scroll{overflow-x:auto; overscroll-behavior-x:contain; -ms-overflow-style:none; scrollbar-width:thin}
 .th-grid{
   display:grid; grid-template-rows:auto auto; grid-auto-flow:column; grid-auto-columns:max-content;
   column-gap:16px; row-gap:0; align-items:start; width:max-content; min-width:100%;
-  --th-surface: color-mix(in srgb, var(--purple) 5%, var(--paper-4));
-  background:var(--th-surface); border-radius:7px; padding:12px 12px 13px;
+  /* the table sits directly on the page field — no card, no tint. --th-mask only backs the sticky
+     row labels so chips can't slide underneath them while the table scrolls sideways. */
+  --th-mask:#c6bfd4;
+  background:transparent; padding:6px 0 8px;
 }
 /* row labels — the only fixed column; sticky so the table reads while scrolled */
 .th-lab{
   position:sticky; left:0; z-index:1; align-self:stretch;
   display:flex; flex-direction:column; justify-content:center; gap:2px;
   width:118px; padding:6px 14px 6px 0;
-  background:linear-gradient(90deg, var(--th-surface) 74%, color-mix(in srgb, var(--th-surface) 0%, transparent));
+  background:transparent;   /* the field shows through; the mask is only needed where the table scrolls */
 }
 .th-lab b{font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.05em; color:var(--ink-2)}
 .th-lab i{font-family:var(--mono); font-style:normal; font-size:9px; letter-spacing:.02em; color:#a89db8; line-height:1.3}
@@ -530,9 +533,10 @@
 }
 .th-c-th .tag.aat:hover{background:var(--purple); color:#fff; transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--ink-2)}
 .th-none{font-family:var(--mono); font-size:12px; color:#a89db8; padding:0 4px}
-.th-legend{font-family:var(--mono); font-size:10px; letter-spacing:.03em; color:#8a7f96; padding:6px 12px 2px 12px}
+.th-legend{font-family:var(--mono); font-size:10px; letter-spacing:.03em; color:#6f6580; padding:4px 0 2px}
 @media(max-width:760px){
-  .th-lab{width:96px; padding-right:10px}
+  /* narrow screens are the only place the table scrolls sideways, so the sticky labels need a backing */
+  .th-lab{width:96px; padding-right:10px; background:linear-gradient(90deg, var(--th-mask) 70%, transparent)}
   .th-grid{column-gap:12px}
   .th-c-th .tag.aat{font-size:11.5px; padding:5px 10px}
 }
@@ -1585,3 +1589,20 @@ textarea.ed-in{resize:vertical; line-height:1.5}
   border-bottom:1px solid #5b3ba659; padding-bottom:1px; letter-spacing:.06em}
 .kd-aat:hover{color:var(--purple-d); border-bottom-color:var(--purple)}
 .kd-aat:focus-visible{outline:2px solid var(--purple); outline-offset:2px}
+
+/* ── description text: fold long copy behind a fade (mask), reveal with the button ── */
+.dt-fold{position:relative}
+.dt-fold.is-folded{
+  max-height:360px; overflow:hidden;
+  -webkit-mask-image:linear-gradient(180deg,#000 68%, rgba(0,0,0,.35) 88%, transparent 100%);
+  mask-image:linear-gradient(180deg,#000 68%, rgba(0,0,0,.35) 88%, transparent 100%);
+}
+.dt-fold.is-open{max-height:none; -webkit-mask-image:none; mask-image:none}
+.dt-fold-btn{
+  margin-top:6px; font-family:var(--mono); font-weight:700; font-size:11.5px; letter-spacing:.06em;
+  color:var(--ink-2); background:transparent; border:0; border-bottom:1.5px solid var(--ink-2);
+  padding:2px 1px; cursor:pointer; transition:color .15s, border-color .15s;
+}
+.dt-fold-btn:hover{color:var(--purple); border-bottom-color:var(--purple)}
+.dt-fold-btn:focus-visible{outline:2px solid var(--purple); outline-offset:3px}
+.dt-fold-btn[hidden]{display:none}

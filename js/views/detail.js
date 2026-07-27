@@ -168,9 +168,9 @@ export async function detailView(type, id){
       </header>
       <div class="dt-berries" aria-hidden="true"><span class="dt-berry b1"></span><span class="dt-berry b2"></span><span class="dt-berry b3"></span><span class="dt-berry b4"></span></div>
 
+      ${tags}
       <div class="dt-grid">
         <div class="dt-main">
-          ${tags}
           ${desc}
           ${blocks}
           ${gallery}
@@ -193,6 +193,7 @@ export async function detailView(type, id){
     </article>`);
   paintLogos(app);
   wireExpanders();
+  wireFolds();
   wireTooltips();
   wireDetailBerries();
   wireVizTabs();
@@ -342,7 +343,10 @@ function descHTML(type, r, txt){
   const caveat = (type === 'opencall' && r.desc_src === 'image-vision')
     ? `<div class="dt-caveat">${L('이 내용은 원문 포스터 이미지에서 자동 추출된 것으로, 연락처·고유명사·표가 부정확할 수 있습니다. 정확한 정보는 아래 <b>원문 이미지</b>를 확인하세요.','This content was automatically extracted from the original poster image, so contact details, proper nouns, and tables may be inaccurate. For accurate information, check the <b>Source images</b> below.')}</div>`
     : '';
-  return `<section class="dt-sec"><h2 class="dt-h2">${L('설명','About')}</h2>${caveat}<div class="dt-prose${md?' dt-md':''}">${body}</div></section>`;
+  // long descriptions fold: the text is masked into a fade and expands on demand (see wireFolds)
+  return `<section class="dt-sec"><h2 class="dt-h2">${L('설명문','Description text')}</h2>${caveat}
+    <div class="dt-fold" data-fold><div class="dt-prose${md?' dt-md':''}">${body}</div></div>
+    <button class="dt-fold-btn" type="button" hidden>${L('더 보기','Show more')}</button></section>`;
 }
 /* opencall source images — the notice often lives in posters/cardnews/scans; we kept the originals
    so the info that came as images is shown as images too (img/opencall/<id>/NN.jpg). */
@@ -791,6 +795,23 @@ function backFor(type){
 }
 
 /* expand capped relationship grids */
+/* fold long description text: collapse past FOLD_MAX and reveal on click (fade via CSS mask) */
+const FOLD_MAX = 360;
+function wireFolds(){
+  app.querySelectorAll('[data-fold]').forEach(fold => {
+    const btn = fold.nextElementSibling;
+    if(!btn || !btn.classList.contains('dt-fold-btn')) return;
+    if(fold.scrollHeight <= FOLD_MAX + 60){ fold.classList.add('is-open'); return; }   // short enough: no fold
+    fold.classList.add('is-folded');
+    btn.hidden = false;
+    btn.addEventListener('click', () => {
+      const open = fold.classList.toggle('is-open');
+      fold.classList.toggle('is-folded', !open);
+      btn.textContent = open ? L('접기','Show less') : L('더 보기','Show more');
+      if(!open) btn.scrollIntoView({block:'nearest'});
+    });
+  });
+}
 function wireExpanders(){
   app.querySelectorAll('.expander').forEach(btn=>{
     btn.addEventListener('click', ()=>{
