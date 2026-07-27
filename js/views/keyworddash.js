@@ -159,17 +159,21 @@ function wMonthly(el){
   const picker = ys.map(y => `<button class="kd-kmy${y===cur?' on':''}" data-y="${y}">${y}</button>`).join('');
   const yd = M[cur] || {};
   const maxTop = Math.max(1, ...Object.values(yd).map(a => (a[0] ? a[0][1] : 0)));
-  const cells = Array.from({length:12}, (_, i) => {
+  // one ROW per month (12 rows) with the three places side by side — a 12-column strip squeezed the
+  // names down to 'Cult…', so the axis is flipped and each place gets a full-width-ish cell.
+  const rows = Array.from({length:12}, (_, i) => {
     const m = String(i+1), top = (yd[m] || []).slice(0,3);
     const label = L(`${i+1}월`, MON[i]);
-    if(!top.length) return `<div class="kd-km-cell kd-km-empty"><span class="kd-km-m">${label}</span><span class="kd-km-dash">—</span></div>`;
-    // explicit 1·2·3 ranking: every place gets its rank badge, name and count (1st is filled)
-    const rows = top.map(([k,n], ri) =>
-      `<button class="kd-km-r kd-km-r${ri+1}" data-k="${esc(k)}" title="${esc(kwLabel(k))} · ${n}${L('건','')}">
-        <b class="kd-km-rk">${ri+1}</b><span class="kd-km-nm">${esc(kwLabel(k))}</span><i class="kd-km-n">${n}</i>
+    const cellsOf = top.map(([k,n], ri) =>
+      `<button class="kd-mr kd-mr${ri+1}" data-k="${esc(k)}" title="${esc(kwLabel(k))} · ${n}${L('건','')}">
+        <b class="kd-mrk">${ri+1}</b><span class="kd-mnm">${esc(kwLabel(k))}</span><i class="kd-mn">${n}</i>
       </button>`).join('');
-    return `<div class="kd-km-cell"><span class="kd-km-m">${label}</span><div class="kd-km-rank">${rows}</div></div>`;
+    const pad = Array.from({length: 3 - top.length}, () => `<span class="kd-mr kd-mr-empty">—</span>`).join('');
+    return `<div class="kd-mrow"><span class="kd-mm">${label}</span><div class="kd-mcells">${cellsOf}${pad}</div></div>`;
   }).join('');
+  const cells = `<div class="kd-mhead"><span class="kd-mm"></span><div class="kd-mcells">
+      <span class="kd-mh">${L('1위','1st')}</span><span class="kd-mh">${L('2위','2nd')}</span><span class="kd-mh">${L('3위','3rd')}</span>
+    </div></div>${rows}`;
   return wWrap(L('월별 주제','Monthly themes'),
     `<div class="kd-km-years">${picker}</div><div class="kd-km-strip">${cells}</div>`,
     L('선택한 해의 달마다 가장 많이 등장한 주제입니다. 연도를 고르고, 주제를 누르면 그 주제로 대시보드가 바뀝니다.','The most frequent theme in each month of the selected year. Pick a year, then click a theme to switch the dashboard.'));

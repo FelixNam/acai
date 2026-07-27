@@ -1251,11 +1251,8 @@
 .kd-kmy{font-family:var(--mono); font-size:11px; font-weight:700; color:var(--ink-2); background:#ffffff66; border:1px solid #1c172222; border-radius:7px; padding:5px 10px; cursor:pointer}
 .kd-kmy:hover{border-color:var(--purple)}
 .kd-kmy.on{background:var(--purple); color:#fff; border-color:var(--purple)}
-.kd-km-strip{display:grid; grid-template-columns:repeat(12,1fr); gap:7px}
-.kd-km-cell{display:flex; flex-direction:column; gap:4px; min-width:0}
-.kd-km-m{font-family:var(--mono); font-size:10px; font-weight:700; color:#8a82a0; letter-spacing:.02em}
+.kd-km-strip{display:block; margin-top:6px}
 .kd-km-empty{opacity:.5}
-.kd-km-dash{font-family:var(--mono); font-size:12px; color:#b0a8c0; padding:7px 2px}
 @media(max-width:820px){ .kd-km-strip{grid-template-columns:repeat(6,1fr)} }
 @media(max-width:520px){ .kd-km-strip{grid-template-columns:repeat(4,1fr)} }
 /* 2020 COVID marker on the year-axis widgets (연도별 추이 · 히트맵) */
@@ -1560,29 +1557,35 @@ textarea.ed-in{resize:vertical; line-height:1.5}
 .dt-fold-btn:focus-visible{outline:2px solid var(--purple); outline-offset:3px}
 .dt-fold-btn[hidden]{display:none}
 
-/* ── monthly themes: explicit 1·2·3 ranking per month ── */
-.kd-km-rank{display:flex; flex-direction:column; gap:3px}
-.kd-km-r{
-  display:grid; grid-template-columns:16px 1fr auto; align-items:center; gap:7px;
-  width:100%; text-align:left; padding:5px 8px; cursor:pointer;
+
+/* ── monthly themes: one row per month, the three places laid out across the row so the names fit ── */
+.kd-mhead, .kd-mrow{display:grid; grid-template-columns:54px minmax(0,1fr); gap:10px; align-items:center}
+.kd-mrow{padding:3px 0; border-bottom:1px solid #1c17260d}
+.kd-mrow:last-child{border-bottom:0}
+.kd-mcells{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px}
+.kd-mm{font-family:var(--mono); font-weight:700; font-size:10.5px; letter-spacing:.06em; color:#6f6580}
+.kd-mh{font-family:var(--mono); font-size:9.5px; letter-spacing:.08em; color:#8a7f96; padding-left:4px}
+.kd-mr{
+  display:grid; grid-template-columns:17px minmax(0,1fr) auto; align-items:center; gap:8px;
+  width:100%; text-align:left; padding:6px 10px; cursor:pointer;
   border:1.5px solid #241c3326; background:#f6f2ea9c; border-radius:4px;
   transition:background .15s, border-color .15s, transform .07s;
 }
-.kd-km-r:hover{background:#fffdf7; border-color:var(--ink-2); transform:translate(-1px,-1px)}
-.kd-km-r:focus-visible{outline:2px solid var(--purple); outline-offset:2px}
-.kd-km-rk{
-  font-family:var(--mono); font-weight:700; font-size:10px; line-height:16px; text-align:center;
-  color:#6f6580; background:#241c3312; border-radius:3px;
+.kd-mr:hover{background:#fffdf7; border-color:var(--ink-2); transform:translate(-1px,-1px)}
+.kd-mr:focus-visible{outline:2px solid var(--purple); outline-offset:2px}
+.kd-mrk{font-family:var(--mono); font-weight:700; font-size:10px; line-height:17px; text-align:center; color:#6f6580; background:#241c3312; border-radius:3px}
+.kd-mnm{font-family:var(--serif); font-size:13px; color:var(--ink-2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.kd-mn{font-family:var(--mono); font-style:normal; font-size:10px; color:#8a7f96}
+.kd-mr1{background:var(--purple); border-color:var(--purple)}
+.kd-mr1 .kd-mnm{color:#fff; font-weight:600}
+.kd-mr1 .kd-mrk{color:#fff; background:#ffffff2e}
+.kd-mr1 .kd-mn{color:#ffffffc7}
+.kd-mr1:hover{background:var(--purple-d); border-color:var(--purple-d)}
+.kd-mr2{background:#efeaf8} .kd-mr3{background:#f4f1fa}
+.kd-mr-empty{display:flex; align-items:center; justify-content:center; color:#a89db8; font-family:var(--mono); font-size:11px; border:1.5px dashed #241c3318; border-radius:4px; padding:6px}
+@media(max-width:760px){
+  .kd-mhead{display:none}
+  .kd-mrow{grid-template-columns:1fr; gap:4px; padding:7px 0}
+  .kd-mcells{grid-template-columns:1fr; gap:4px}
 }
-.kd-km-nm{font-family:var(--serif); font-size:12.5px; color:var(--ink-2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-.kd-km-n{font-family:var(--mono); font-style:normal; font-size:10px; color:#8a7f96}
-/* 1st place carries the emphasis */
-.kd-km-r1{background:var(--purple); border-color:var(--purple)}
-.kd-km-r1 .kd-km-nm{color:#fff; font-weight:600}
-.kd-km-r1 .kd-km-rk{color:#fff; background:#ffffff2e}
-.kd-km-r1 .kd-km-n{color:#ffffffc7}
-.kd-km-r1:hover{background:var(--purple-d); border-color:var(--purple-d)}
-.kd-km-r2{background:#efeaf8}
-.kd-km-r3{background:#f4f1fa}
-@media(max-width:760px){ .kd-km-nm{font-size:12px} }
-@media(prefers-reduced-motion:reduce){ .kd-km-r:hover{transform:none} }
+@media(prefers-reduced-motion:reduce){ .kd-mr:hover{transform:none} }
