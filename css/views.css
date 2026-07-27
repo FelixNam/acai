@@ -1178,7 +1178,7 @@
 .kd-row2{display:grid; grid-template-columns:1fr 1fr; gap:30px 48px; margin-bottom:32px}
 .kd-row2 > .kd-w{display:flex; flex-direction:column}   /* equal-height cells */
 .kd-row2 .kd-trend{margin-top:auto}                     /* push the bar chart to the bottom → aligns with 분야·매체 */
-.kd-focus{background:#ffffff5c; border:1px solid #1c17221c; border-radius:14px; padding:clamp(24px,2.8vw,38px); margin-bottom:52px}
+.kd-focus{scroll-margin-top:calc(var(--chrome-h) + 18px); background:#ffffff5c; border:1px solid #1c17221c; border-radius:14px; padding:clamp(24px,2.8vw,38px); margin-bottom:52px}
 /* generous, even vertical rhythm between the stacked widgets inside feature 1 */
 .kd-focus > .kd-w, .kd-focus > .kd-row2, .kd-focus > .kd-cmprow{margin-bottom:60px}
 .kd-focus > *:last-child{margin-bottom:0}

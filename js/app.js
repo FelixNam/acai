@@ -35,9 +35,7 @@ const NAV = [
   {ko:'전시',     en:'Exhibition',  hash:'#/list/exhibition', key:'exhibition'},
   {ko:'프로그램', en:'Program',     hash:'#/list/program',    key:'program'},
   {ko:'공모',     en:'Open Call',   hash:'#/list/opencall',   key:'opencall'},
-  {ko:'장소',     en:'Venue',       hash:'#/list/venue',      key:'venue'},
   {ko:'연표',     en:'Timeline',    hash:'#/timeline',        key:'timeline'},
-  {ko:'관계망',   en:'Network',     hash:'#/network',         key:'network'},
   {ko:'소개',     en:'About',       hash:'#/about',           key:'about'},
 ];
 function buildNav(){
@@ -75,7 +73,8 @@ function markNav(key){
     a.classList.toggle('on', on);
     if(on) active = a;
   });
-  // 9 tabs overflow on small screens: keep the current one in view (scrollLeft, so the page never jumps).
+  // the bar can still overflow on small screens: keep the current tab in view (scrollLeft, so the page never jumps).
+  // markNav is also called with keys that have no tab (venue, network — reachable by link, not by tab); active stays null.
   // deferred two frames — on first paint the bar may still be hidden/unlaid-out, so widths read as 0.
   const centerActive = () => {
     if(!active || nav.scrollWidth <= nav.clientWidth) return;

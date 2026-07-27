@@ -96,10 +96,12 @@ body.boot{background:#1c1726}
 .chrome-nav a:active{transform:translate(2px,2px); box-shadow:0 0 0 var(--ink-2)}
 .chrome-nav a:focus-visible{outline:2px solid var(--purple); outline-offset:2px}
 
-/* location label — sits beside the wordmark (identity + where you are on the left, actions on the right).
-   ink-coloured for contrast on the lilac bar; the green rule carries the accent. */
+/* location label — third line of the brand block, directly under the wordmark. It used to sit in
+   its own slot between the brand and the nav, where it competed for width with the tabs: once the row got
+   tight the nav started scrolling and clipped its leading tab (Browse rendered as "wse"). Here it is
+   narrower than the subtitle above it, so it costs neither nav width nor bar height. */
 .chrome-crumb{
-  flex:0 1 auto; min-width:0; max-width:30ch;
+  max-width:100%; margin-top:4px;
   font-family:var(--mono); font-weight:700; font-size:10.5px; letter-spacing:.14em;
   color:var(--ink-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
@@ -132,22 +134,24 @@ body.boot{background:#1c1726}
 }
 body.has-chrome .lang-seg-float{display:none}
 
-/* responsive: structural collapse, in this order — location label, subtitle, then the nav scrolls.
-   The English tab labels run ~25% wider than the Korean ones (834px vs 745px for the 9 tabs), so the
-   EN bar gives up the location label and a little tab padding earlier. */
-@media(max-width:1180px){ .chrome-crumb{display:none} }
-@media(max-width:1500px){
-  html[lang="en"] .chrome-crumb{display:none}
-  html[lang="en"] .chrome-nav a{padding:9px 10px}
+/* responsive: structural collapse, in this order — subtitle, tab padding, then the nav scrolls.
+   The location label no longer collapses with width: it lives in the brand column and never
+   competes with the tabs. The English tab labels run ~25% wider than the Korean ones. */
+@media(max-width:1500px){ html[lang="en"] .chrome-nav a{padding:9px 10px} }
+/* the wider EN labels still outrun the bar below ~1180px, so the row scrolls there: fade the trailing
+   edge so a clipped tab reads as "more to the right", not as a broken tab. */
+@media(max-width:1180px){
+  html[lang="en"] .chrome-nav a{padding:9px 8px}
+  html[lang="en"] .chrome-nav{-webkit-mask-image:linear-gradient(90deg,#000 90%,transparent); mask-image:linear-gradient(90deg,#000 90%,transparent)}
 }
-@media(max-width:1024px){ .chrome-words i{display:none} }
+@media(max-width:1024px){ .chrome-words i{display:none} }   /* subtitle goes; the crumb becomes line 2 */
 @media(max-width:760px){
   .chrome{gap:10px}
   .chrome-nav{-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent); mask-image:linear-gradient(90deg,#000 88%,transparent)}
   .chrome-nav a{padding:8px 9px; font-size:11.5px}
   .lang-b{padding:7px 8px; font-size:11px}
 }
-@media(max-width:560px){ .lang-seg-float{top:10px; right:10px} }
+@media(max-width:560px){ .lang-seg-float{top:10px; right:10px} .chrome-crumb{display:none} }
 @media(max-width:420px){
   .chrome-words b, .chrome-words b.acai-wm{font-size:22px}
   .chrome-brand .logo{width:34px;height:31px}

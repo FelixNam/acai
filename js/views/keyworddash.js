@@ -242,7 +242,7 @@ export async function wireKeywordDash(root){
     if(kmy){ el.dataset.kmYear = kmy.dataset.y; render(el); return; }
     const pick = e.target.closest('[data-k]');
     if(pick && !pick.classList.contains('kd-ex')){ el.dataset.sel = pick.dataset.k; el.dataset.iq = ''; el.dataset.ip = 0; el.dataset.tf = ''; render(el);
-      el.querySelector('.kd-focus,.kd-grid')?.scrollIntoView({behavior:'smooth', block:'nearest'}); return; }
+      el.querySelector('.kd-focus,.kd-grid')?.scrollIntoView({behavior:'smooth', block:'start'}); return; }
     const sortb = e.target.closest('.kd-sortb'); if(sortb){ el.dataset.sort = sortb.dataset.sort; render(el); return; }
   });
   el.addEventListener('input', e => {
