@@ -1548,3 +1548,9 @@ textarea.ed-in{resize:vertical; line-height:1.5}
 .ed-save:hover{background:var(--purple-2)}
 .ed-save:active{transform:translate(3px,3px); box-shadow:none}
 @media(max-width:560px){ .ed-fields, .ed-newcard{grid-template-columns:1fr} }
+
+/* Getty AAT id badge in the selected-theme eyebrow (keyword dashboard) */
+.kd-aat{font-family:var(--mono); font-weight:700; color:var(--purple); text-decoration:none;
+  border-bottom:1px solid #5b3ba659; padding-bottom:1px; letter-spacing:.06em}
+.kd-aat:hover{color:var(--purple-d); border-bottom-color:var(--purple)}
+.kd-aat:focus-visible{outline:2px solid var(--purple); outline-offset:2px}

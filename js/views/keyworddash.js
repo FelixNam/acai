@@ -7,8 +7,11 @@
    Data: data/keyword_index.json (built by tools/build_keyword_index.py).
    ============================================================ */
 import { esc } from '../ui.js';
-import { isLocalCat, kwLabel, L } from '../i18n.js';
+import { isLocalCat, kwLabel, L, aatIdOf } from '../i18n.js';
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+/* Getty AAT id badge for the selected theme — links out to the Getty vocabulary page */
+const aatLink = k => { const id = aatIdOf(k);
+  return id ? ` <a class="kd-aat" href="https://vocab.getty.edu/page/aat/${id}" target="_blank" rel="noopener" title="Getty AAT ${id}">${id}</a>` : ''; };
 const kL=(k,max)=>{const l=kwLabel(k);return (max&&l.length>max)?l.slice(0,max)+'…':l;};
 import { keywordIndex, keywordTexts } from '../data.js';
 
@@ -34,7 +37,9 @@ function years(){
 function wHead(k){
   const r = rec(k), d = dynOf(k), t = d > 0.15 ? L('상승','Rising') : d < -0.15 ? L('하락','Falling') : L('유지','Steady');
   return `<div class="kd-head">
-    <div class="kd-head-l"><div class="kd-eyb">${isLocalCat(k)?L('선택한 주제 · 자체 보완 분류 (GETTY AAT 외)','Selected theme · Local category (outside Getty AAT)'):L('선택한 주제 · GETTY AAT','Selected theme · Getty AAT')}</div><div class="kd-name">${isLocalCat(k)?'† ':''}${esc(kwLabel(k))}</div></div>
+    <div class="kd-head-l"><div class="kd-eyb">${isLocalCat(k)
+      ? L('선택한 주제 · 자체 보완 분류 (GETTY AAT 외)','Selected theme · Local category (outside Getty AAT)')
+      : L('선택한 주제 · GETTY AAT','Selected theme · Getty AAT') + aatLink(k)}</div><div class="kd-name">${isLocalCat(k)?'† ':''}${esc(kwLabel(k))}</div></div>
     <div class="kd-head-r">
       <div class="kd-head-stats">${L('총','Total')} <b>${r.n.toLocaleString()}</b>${L('건','')} · ${L('첫 등장','First')} <b>${r.first}</b> · ${L('정점','Peak')} <b>${r.peak}</b></div>
       <div class="kd-dyn kd-dyn-${t}">${L('최근 추세','Recent trend')} <b>${t}</b> <span>${d>0?'+':''}${d}</span></div>

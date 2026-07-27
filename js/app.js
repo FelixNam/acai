@@ -4,7 +4,7 @@
 import { paintLogos, setCrumb, th, pixelBurst } from './ui.js';
 import { meta, searchIndex, ENTITIES } from './data.js';
 import { home, markBooted, unmountBerryBg } from './views/intro.js';
-import { L, getLang, setLang, setKwMap } from './i18n.js';
+import { L, getLang, setLang, setKwMap, setCatAat } from './i18n.js';
 
 export const wait = ms => new Promise(r=>setTimeout(r,ms));
 const app = document.getElementById('app');
@@ -157,7 +157,8 @@ async function start(){
   // EN overlays (keyword + category) — EN 모드에서는 초기 렌더 전에 로드 완료를 보장 (렌더 레이스 방지)
   const _ov = Promise.all([
     fetch('data/keyword_en.json').then(r=>r.ok?r.json():{}).then(setKwMap).catch(()=>{}),
-    fetch('data/category_en.json').then(r=>r.ok?r.json():{}).then(setKwMap).catch(()=>{})
+    fetch('data/category_en.json').then(r=>r.ok?r.json():{}).then(setKwMap).catch(()=>{}),
+    fetch('data/category_aat.json').then(r=>r.ok?r.json():{}).then(setCatAat).catch(()=>{})
   ]);
   if(getLang()==='en'){ await _ov; }
   const h = parseHash();

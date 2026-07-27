@@ -58,3 +58,7 @@ export function isLocalCat(ko){ return _LOCALCATS.has(ko); }
 let _KWEN = {};
 export function setKwMap(m){ if(m && typeof m==='object') _KWEN = Object.assign({}, _KWEN, m); }
 export function kwLabel(k){ return getLang()==='en' ? (_KWEN[k] || k) : k; }
+/* Getty AAT id overlay (data/category_aat.json): category ko_label -> aat_id */
+let _CATAAT = {};
+export function setCatAat(m){ if(m && typeof m==='object') _CATAAT = m; }
+export function aatIdOf(label){ return _CATAAT[label] || null; }
