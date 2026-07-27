@@ -390,20 +390,31 @@ function tagsHTML(r){
   };
   const kwChip = (k) => `<a class="tag th-kw" href="#/search?q=${encodeURIComponent(glossStrip(k))}" title="${L(`아카이브에서 “${esc(glossStrip(k))}” 검색`,`Search the archive for “${esc(kwLabel(glossStrip(k)))}”`)}">${esc(kwLabel(glossStrip(k)))}</a>`;
   const usedCats = new Set();
-  const pairs = kw.map((k,i)=>{
+  // near-borderless table: row 1 = the phrase the LLM extracted, row 2 = the theme it was matched to.
+  // grid-auto-flow:column means each DOM pair (phrase cell, theme cell) becomes one aligned column.
+  const cols = kw.map((k,i)=>{
     const c = kc[i];
     if(c) usedCats.add(c);
-    return `<div class="th-pair">${c?catChip(c):''}<span class="th-pair-tie"></span>${kwChip(k)}</div>`;
+    return `<div class="th-c th-c-kw">${kwChip(k)}</div>`
+         + `<div class="th-c th-c-th">${c ? catChip(c) : `<span class="th-none">—</span>`}</div>`;
   });
-  // 현행 키워드와 짝지어지지 않은 잔여 카테고리(정규화로 키워드가 병합된 경우)는 카테고리 단독으로 표시
-  for(const a of aat) if(!usedCats.has(a)) pairs.push(`<div class="th-pair th-pair-solo">${catChip(a)}</div>`);
-  const tip = L('키워드는 전시 제목·설명에서 LLM(Claude Sonnet 4.6)이 추출한 주제어이고, 그 위의 카테고리는 각 키워드를 아우르는 상위 분류입니다. 카테고리는 대부분 Getty AAT의 Related Concepts 통제어휘에 매핑되며, † 표식이 붙은 것은 AAT에 대응 범주가 없어 키워드가 그대로 분류로 쓰인 자체 보완 분류입니다(출현 3회 미만은 \'기타\'로 묶임).','Keywords are thematic terms an LLM (Claude Sonnet 4.6) extracted from the title and description; the category above each keyword is its broader class. Categories are mapped to the Getty AAT Related Concepts controlled vocabulary where possible; a † mark denotes a supplemental local category with no Getty AAT counterpart (rare unmatched keywords are grouped under \'Other\').');
-  const legend = hasLocal ? `<div class="th-legend">${L('† 자체 보완 분류 — Getty AAT에 대응 범주가 없어 키워드가 그대로 분류로 쓰인 항목','† Supplemental local category — no Getty AAT counterpart; the keyword itself serves as the category')}</div>` : '';
+  // categories with no current keyword (normalisation merged the phrase away) still get a column
+  for(const a of aat) if(!usedCats.has(a))
+    cols.push(`<div class="th-c th-c-kw"><span class="th-none">—</span></div><div class="th-c th-c-th">${catChip(a)}</div>`);
+
+  const tipKw = L('전시 제목·설명문에서 LLM(Claude Sonnet 4.6)이 뽑아낸 주제어입니다. 원문에 근거(evidence)가 함께 기록돼 있습니다.','Thematic phrases an LLM (Claude Sonnet 4.6) extracted from the title and description; each is stored with a supporting quote from the source text.');
+  const tipTh = L('각 키워드를 Getty AAT의 Associated Concepts 통제어휘에 매칭한 상위 주제입니다. † 표식은 AAT에 대응 범주가 없어 키워드가 그대로 주제로 쓰인 자체 보완 분류이며, 출현 3회 미만은 \'기타\'로 묶입니다.','The broader theme each phrase was matched to in the Getty AAT Associated Concepts vocabulary. A † marks a supplemental local theme with no AAT counterpart; rarely-used unmatched phrases are grouped under \'Other\'.');
+  const legend = hasLocal ? `<div class="th-legend">${L('† 자체 보완 분류 — Getty AAT에 대응 범주가 없어 키워드가 그대로 주제로 쓰인 항목','† Supplemental local theme — no Getty AAT counterpart; the phrase itself serves as the theme')}</div>` : '';
   return `<section class="dt-sec dt-themes"><h2 class="dt-h2">${L('주제','Themes')}</h2>
-    <div class="th-ladder"><div class="th-tier th-tier-cat">
-      <span class="th-tier-l has-tip" data-tip="${esc(tip)}" tabindex="0"><b>${L('키워드 카테고리','Keyword category')}</b><i>${L('키워드별 상위 분류','Broader class per keyword')}</i></span>
-      <div class="th-pairs">${pairs.join('')}</div>
-    </div>${legend}</div>
+    <div class="th-table">
+      <div class="th-scroll">
+        <div class="th-grid">
+          <div class="th-lab th-lab-kw has-tip" data-tip="${esc(tipKw)}" tabindex="0"><b>${L('추출 키워드','Keyword phrase')}</b><i>${L('설명문에서 추출','extracted from the text')}</i></div>
+          <div class="th-lab th-lab-th has-tip" data-tip="${esc(tipTh)}" tabindex="0"><b>${L('매칭된 주제','Matched theme')}</b><i>${L('Getty AAT 통제어휘','Getty AAT vocabulary')}</i></div>
+          ${cols.join('')}
+        </div>
+      </div>${legend}
+    </div>
   </section>`;
 }
 /* ---------- relationship sections ---------- */

@@ -494,31 +494,49 @@
 .tag.aat{font-family:var(--serif); font-style:italic}
 
 /* ── 주제 위계 연출: 구체적 키워드 → Getty AAT 상위 분류 ── */
-.dt-themes .th-ladder{display:flex; flex-direction:column; gap:0; margin-top:2px}
-.th-tier{display:flex; gap:14px; align-items:flex-start; padding:11px 12px}
-.th-tier-l{flex:none; width:104px; display:flex; flex-direction:column; gap:3px; padding-top:5px}
-.th-tier-l b{font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.05em; color:var(--ink-2)}
-.th-tier-l i{font-family:var(--mono); font-style:normal; font-size:9px; letter-spacing:.03em; color:#a89db8}
-.th-chips{display:flex; flex-wrap:wrap; align-items:center; flex:1; min-width:0}
-/* 상위 분류(우산 개념): 더 크고 채워진 칩 + 옅은 강조 배경 */
-.th-tier-cat{background:linear-gradient(0deg,transparent, color-mix(in srgb, var(--purple) 8%, transparent)); border-radius:7px}
-.th-tier-cat .tag.aat{font-family:var(--mono); font-style:normal; font-weight:700; font-size:13px; letter-spacing:.01em; padding:6px 12px; margin:0 7px 7px 0; background:var(--ink-2); color:#f3ece0; border-color:var(--ink-2); box-shadow:3px 3px 0 #241c3333}
-.th-tier-cat .tag.aat:hover{background:var(--purple); color:#fff; transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--ink-2)}
-/* † 자체 보완 분류(Getty AAT 외): 표식(†)만으로 구분 — 칩 스타일은 일반 카테고리와 동일 */
-/* 키워드-카테고리 쌍 레이아웃: 카테고리(위) ↕ 키워드(아래) 세로 짝, 짝들이 가로로 흐름 */
-.th-pairs{display:flex; flex-wrap:wrap; align-items:flex-start; gap:14px 18px; flex:1; min-width:0; padding:2px 0}
-.th-pair{display:flex; flex-direction:column; align-items:center; gap:0}
-.th-pair .tag{margin:0}
-.th-pair .tag.th-kw{font-size:12px; padding:3px 9px; box-shadow:1.5px 1.5px 0 #241c3322}
-.th-pair-tie{width:2px; height:9px; background:var(--ink-2); opacity:.35}
-.th-pair-solo .th-pair-tie{display:none}
-.th-legend{font-family:var(--mono); font-size:10px; letter-spacing:.03em; color:#8a7f96; padding:2px 12px 6px calc(104px + 26px)}
-@media(max-width:760px){.th-legend{padding-left:12px}}
-/* 위로 묶이는 연결 표시 */
-.th-merge{margin-left:116px; padding:1px 0 3px}
-.th-merge span{font-family:var(--mono); font-size:10px; letter-spacing:.03em; color:#8a7ea0}
-/* 구체적 키워드: 작고 가벼운 칩 */
-.th-tier-kw .tag.th-kw{font-size:12px; padding:3px 9px; box-shadow:1.5px 1.5px 0 #241c3322}
+/* ── THEMES: a near-borderless two-row table. Row 1 = the extracted keyword phrase, row 2 = the
+   Getty AAT theme it was matched to. grid-auto-flow:column keeps each phrase/theme pair in one
+   aligned column; the row labels sit in the first (sticky) column so they survive horizontal scroll. */
+.dt-themes .th-table{margin-top:4px}
+.th-scroll{overflow-x:auto; overscroll-behavior-x:contain; -ms-overflow-style:none; scrollbar-width:thin}
+.th-grid{
+  display:grid; grid-template-rows:auto auto; grid-auto-flow:column; grid-auto-columns:max-content;
+  column-gap:16px; row-gap:0; align-items:start; width:max-content; min-width:100%;
+  --th-surface: color-mix(in srgb, var(--purple) 5%, var(--paper-4));
+  background:var(--th-surface); border-radius:7px; padding:12px 12px 13px;
+}
+/* row labels — the only fixed column; sticky so the table reads while scrolled */
+.th-lab{
+  position:sticky; left:0; z-index:1; align-self:stretch;
+  display:flex; flex-direction:column; justify-content:center; gap:2px;
+  width:118px; padding:6px 14px 6px 0;
+  background:linear-gradient(90deg, var(--th-surface) 74%, color-mix(in srgb, var(--th-surface) 0%, transparent));
+}
+.th-lab b{font-family:var(--mono); font-weight:700; font-size:11px; letter-spacing:.05em; color:var(--ink-2)}
+.th-lab i{font-family:var(--mono); font-style:normal; font-size:9px; letter-spacing:.02em; color:#a89db8; line-height:1.3}
+.th-lab-kw{border-bottom:1px solid var(--rule-2)}      /* the single hairline that separates the two rows */
+/* cells */
+.th-c{display:flex; align-items:center; padding:7px 0}
+.th-c-kw{border-bottom:1px solid var(--rule-2); position:relative}
+.th-c-kw::after{                                        /* short tick: this phrase maps to the theme below */
+  content:''; position:absolute; left:14px; bottom:-1px; width:2px; height:7px;
+  background:var(--ink-2); opacity:.32;
+}
+.th-c .tag{margin:0}
+.th-c-kw .tag.th-kw{font-family:var(--serif); font-size:13px; padding:4px 11px; box-shadow:1.5px 1.5px 0 #241c3322}
+.th-c-th .tag.aat{
+  font-family:var(--mono); font-style:normal; font-weight:700; font-size:12.5px; letter-spacing:.01em;
+  padding:6px 12px; background:var(--ink-2); color:#f3ece0; border-color:var(--ink-2); box-shadow:3px 3px 0 #241c3333;
+}
+.th-c-th .tag.aat:hover{background:var(--purple); color:#fff; transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--ink-2)}
+.th-none{font-family:var(--mono); font-size:12px; color:#a89db8; padding:0 4px}
+.th-legend{font-family:var(--mono); font-size:10px; letter-spacing:.03em; color:#8a7f96; padding:6px 12px 2px 12px}
+@media(max-width:760px){
+  .th-lab{width:96px; padding-right:10px}
+  .th-grid{column-gap:12px}
+  .th-c-th .tag.aat{font-size:11.5px; padding:5px 10px}
+}
+@media(prefers-reduced-motion:reduce){ .th-c-th .tag.aat:hover{transform:none} }
 
 .minigrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); gap:9px}
 .minigrid.capped{max-height:330px; overflow:hidden; -webkit-mask-image:linear-gradient(180deg,#000 72%,transparent); mask-image:linear-gradient(180deg,#000 72%,transparent)}
