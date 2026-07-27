@@ -168,9 +168,9 @@ export async function detailView(type, id){
       </header>
       <div class="dt-berries" aria-hidden="true"><span class="dt-berry b1"></span><span class="dt-berry b2"></span><span class="dt-berry b3"></span><span class="dt-berry b4"></span></div>
 
-      ${tags}
       <div class="dt-grid">
         <div class="dt-main">
+          ${tags}
           ${desc}
           ${blocks}
           ${gallery}
@@ -399,10 +399,10 @@ function tagsHTML(r){
   const rows = kw.map((k,i)=>{
     const c = kc[i];
     if(c) usedCats.add(c);
-    return `<div class="th-r"><div class="th-p">${kwChip(k)}</div><div class="th-t">${c ? catChip(c) : `<span class="th-none">—</span>`}</div></div>`;
+    return `<div class="th-r"><div class="th-p">${kwChip(k)}</div><span class="th-x" aria-hidden="true">↔</span><div class="th-t">${c ? catChip(c) : `<span class="th-none">—</span>`}</div></div>`;
   });
   for(const a of aat) if(!usedCats.has(a))
-    rows.push(`<div class="th-r"><div class="th-p"><span class="th-none">—</span></div><div class="th-t">${catChip(a)}</div></div>`);
+    rows.push(`<div class="th-r"><div class="th-p"><span class="th-none">—</span></div><span class="th-x" aria-hidden="true">↔</span><div class="th-t">${catChip(a)}</div></div>`);
 
   const tipKw = L('전시 제목·설명문에서 LLM(Claude Sonnet 4.6)이 뽑아낸 주제어입니다. 원문에 근거(evidence)가 함께 기록돼 있습니다.','Thematic phrases an LLM (Claude Sonnet 4.6) extracted from the title and description; each is stored with a supporting quote from the source text.');
   const tipTh = L('각 키워드를 Getty AAT의 Associated Concepts 통제어휘에 매칭한 상위 주제입니다. † 표식은 AAT에 대응 범주가 없어 키워드가 그대로 주제로 쓰인 자체 보완 분류이며, 출현 3회 미만은 \'기타\'로 묶입니다.','The broader theme each phrase was matched to in the Getty AAT Associated Concepts vocabulary. A † marks a supplemental local theme with no AAT counterpart; rarely-used unmatched phrases are grouped under \'Other\'.');
@@ -411,6 +411,7 @@ function tagsHTML(r){
     <div class="th-table">
       <div class="th-head">
         <div class="th-hp has-tip" data-tip="${esc(tipKw)}" tabindex="0"><b>${L('추출 키워드','Keyword phrase')}</b><i>${L('설명문에서 추출','extracted from the text')}</i></div>
+        <span class="th-x th-x-h" aria-hidden="true"></span>
         <div class="th-ht has-tip" data-tip="${esc(tipTh)}" tabindex="0"><b>${L('매칭된 주제','Matched theme')}</b><i>${L('Getty AAT 통제어휘','Getty AAT vocabulary')}</i></div>
       </div>
       <div class="th-rows">${rows.join('')}</div>${legend}
