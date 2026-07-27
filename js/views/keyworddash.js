@@ -151,33 +151,6 @@ function wItems(el){
   </section>`;
 }
 const HEAT_N = 20;   // top-20 keywords in the year×keyword heatmap
-function wHeatmap(){
-  const ys = years();
-  const heat = KIDX.heatmap.slice(0, HEAT_N);
-  const rows = heat.map((row, ri) => {
-    const max = Math.max(...ys.map(y => row.y[y]||0), 1);
-    const cells = ys.map(y => { const c = row.y[y]||0, a = c ? (0.12 + 0.88*c/max) : 0;
-      const kc = y==2020 ? (ri===0 ? ' kc kc-top' : ri===heat.length-1 ? ' kc kc-bot' : ' kc') : '';
-      return `<span class="kd-hc${kc}" title="${esc(kwLabel(row.k))} · ${y} · ${c}${L('건','')}" style="background:rgba(83,74,183,${a.toFixed(2)})"></span>`; }).join('');
-    return `<button class="kd-hr" data-k="${esc(row.k)}"><span class="kd-hr-l">${esc(kwLabel(row.k))}</span><span class="kd-hr-c">${cells}</span></button>`;
-  }).join('');
-  return wWrap(L('연도 × 주제 히트맵','Year × theme heatmap'),
-    `<div class="kd-heat">${rows}</div>
-    <div class="kd-heat-x"><span class="kd-heat-x-sp"></span><span class="kd-heat-x-r"><span>${ys[0]}</span><span>${ys[Math.floor(ys.length/2)]}</span><span>${ys[ys.length-1]}</span></span></div>`,
-    L(`가장 많이 쓰인 상위 ${heat.length}개 주제가 해마다 얼마나 등장했는지를 칸의 진하기로 — 주제를 누르면 대시보드가 바뀝니다.`,`Cell darkness shows how often each of the top ${heat.length} themes appears per year — click a theme to switch the dashboard.`));
-}
-function wMomentum(){
-  const elig = KIDX.keywords.filter(d => d.n >= 8);
-  const up = [...elig].sort((a,b)=>b.dyn-a.dyn).slice(0,5);
-  const dn = [...elig].sort((a,b)=>a.dyn-b.dyn).slice(0,5);
-  const col = (label, arr, cls) => `<div class="kd-mom-col"><div class="kd-mom-h ${cls}">${label}</div>${
-    arr.map(d => `<button class="kd-mom-i" data-k="${esc(d.k)}"><span class="kd-rn">${esc(kwLabel(d.k))}</span>
-      <span class="kd-mom-v ${cls}">${d.dyn>0?'+':''}${d.dyn}</span></button>`).join('')}</div>`;
-  return wWrap(L('상승세 / 하락세 주제','Rising / falling themes'),
-    `<div class="kd-mom">${col(L('↗ 상승세','↗ Rising'), up, 'up')}${col(L('↘ 하락세','↘ Falling'), dn, 'dn')}</div>`,
-    L('최근 3년의 활동량을 직전 3년과 비교해, 다뤄짐이 늘어나는 주제와 줄어드는 주제를 보여줍니다.','Compares the last three years with the preceding three to show which topics are gaining or losing attention.'));
-}
-/* 월별 주제: pick a year, see each month's top keyword(s); click a keyword to drill in */
 function wMonthly(el){
   const M = KIDX.monthly; if(!M) return '';
   const ys = Object.keys(M).filter(y => +y >= 2010 && +y <= 2025);
@@ -187,12 +160,15 @@ function wMonthly(el){
   const yd = M[cur] || {};
   const maxTop = Math.max(1, ...Object.values(yd).map(a => (a[0] ? a[0][1] : 0)));
   const cells = Array.from({length:12}, (_, i) => {
-    const m = String(i+1), top = yd[m] || [];
-    if(!top.length) return `<div class="kd-km-cell kd-km-empty"><span class="kd-km-m">${L(`${i+1}월`,MON[i])}</span><span class="kd-km-dash">—</span></div>`;
-    const a = (0.10 + 0.5*top[0][1]/maxTop).toFixed(2);
-    const head = `<button class="kd-km-top" data-k="${esc(top[0][0])}" title="${esc(kwLabel(top[0][0]))} · ${top[0][1]}${L('건','')}" style="background:rgba(83,74,183,${a})"><b>${esc(kwLabel(top[0][0]))}</b><i>${top[0][1]}</i></button>`;
-    const rest = top.slice(1,3).map(([k]) => `<button class="kd-km-sub" data-k="${esc(k)}" title="${esc(kwLabel(k))}">${esc(kwLabel(k))}</button>`).join('');
-    return `<div class="kd-km-cell"><span class="kd-km-m">${L(`${i+1}월`,MON[i])}</span>${head}<div class="kd-km-rest">${rest}</div></div>`;
+    const m = String(i+1), top = (yd[m] || []).slice(0,3);
+    const label = L(`${i+1}월`, MON[i]);
+    if(!top.length) return `<div class="kd-km-cell kd-km-empty"><span class="kd-km-m">${label}</span><span class="kd-km-dash">—</span></div>`;
+    // explicit 1·2·3 ranking: every place gets its rank badge, name and count (1st is filled)
+    const rows = top.map(([k,n], ri) =>
+      `<button class="kd-km-r kd-km-r${ri+1}" data-k="${esc(k)}" title="${esc(kwLabel(k))} · ${n}${L('건','')}">
+        <b class="kd-km-rk">${ri+1}</b><span class="kd-km-nm">${esc(kwLabel(k))}</span><i class="kd-km-n">${n}</i>
+      </button>`).join('');
+    return `<div class="kd-km-cell"><span class="kd-km-m">${label}</span><div class="kd-km-rank">${rows}</div></div>`;
   }).join('');
   return wWrap(L('월별 주제','Monthly themes'),
     `<div class="kd-km-years">${picker}</div><div class="kd-km-strip">${cells}</div>`,
@@ -236,8 +212,7 @@ function layout(el){
       </div>
       ${wItems(el)}</div>
     <div class="kd-over"><div class="kd-over-h">${L('전체 보기','Overview')}</div>
-      ${wMonthly(el)}
-      <div class="kd-overrow">${wHeatmap()}${wMomentum()}</div></div>`;
+      ${wMonthly(el)}</div>`;
 }
 function render(el){
   el.innerHTML = layout(el);
