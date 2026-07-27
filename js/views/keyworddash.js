@@ -7,8 +7,12 @@
    Data: data/keyword_index.json (built by tools/build_keyword_index.py).
    ============================================================ */
 import { esc } from '../ui.js';
-import { isLocalCat, kwLabel, L, aatIdOf } from '../i18n.js';
+import { isLocalCat, kwLabel, L, aatIdOf, isEN } from '../i18n.js';
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+/* item title: the index carries the harvested English title as the 6th field (exhibitions only —
+   programs have none), so EN mode shows it when present and falls back to the Korean title. */
+const itemTitle = (ko, en) => (isEN() && (en||'').trim()) ? en : ko;
+
 /* Getty AAT id badge for the selected theme — links out to the Getty vocabulary page */
 const aatLink = k => { const id = aatIdOf(k);
   return id ? ` <a class="kd-aat" href="https://vocab.getty.edu/page/aat/${id}" target="_blank" rel="noopener" title="Getty AAT ${id}">${id}</a>` : ''; };
@@ -104,7 +108,10 @@ function itemFiltered(k, iq, tfSet){
   let all = rec(k).items;
   if(tfSet && tfSet.size) all = all.filter(([id,t]) => tfSet.has(t));
   if(!iq) return all;
-  return all.filter(([id,t,ti]) => (ti||'').includes(iq) || (KTEXTS && (KTEXTS[id]||'').includes(iq)));
+  const q = iq.toLowerCase();
+  return all.filter(([id,t,ti,y,inst,tiEn]) => (ti||'').includes(iq)
+    || (tiEn||'').toLowerCase().includes(q)                      // harvested English titles are searchable too
+    || (KTEXTS && (KTEXTS[id]||'').includes(iq)));
 }
 /* the inner list + pager (re-rendered alone on search/page, so the search input keeps focus) */
 function itemListHTML(el){
@@ -114,9 +121,9 @@ function itemListHTML(el){
   const list = itemFiltered(k, iq, tfSet);
   const pages = Math.max(1, Math.ceil(list.length / PER));
   const page = Math.min(Math.max(0, +(el.dataset.ip||0)), pages-1);
-  const rows = list.slice(page*PER, page*PER+PER).map(([id,t,ti,y,inst]) =>
+  const rows = list.slice(page*PER, page*PER+PER).map(([id,t,ti,y,inst,tiEn]) =>
     `<a class="kd-ex" href="#/${TYPE_ROUTE[t]||'exhibition'}/${encodeURIComponent(id)}">
-      <span class="kd-ex-y">${y||''}</span><span class="kd-ex-t">${esc(ti||L('(제목 없음)','(untitled)'))}</span>
+      <span class="kd-ex-y">${y||''}</span><span class="kd-ex-t">${esc(itemTitle(ti, tiEn) || L('(제목 없음)','(untitled)'))}</span>
       <span class="kd-ex-i">${esc(inst||tLabel(t)||'')}</span><span class="kd-ex-a">→</span></a>`).join('')
     || `<div class="kd-more">${iq||tf.length?L('조건에 맞는 항목이 없습니다.','No items match the filter.'):L('표시할 항목이 없습니다.','No items to show.')}</div>`;
   const filt = iq || tf.length;
