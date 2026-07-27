@@ -1330,7 +1330,16 @@
    but living inside the horizontally-sliding .world. .zone-sec already has overflow-y:auto, so the
    zone scrolls internally; .tl-hero + .tl-viewers are normal-flow children. */
 .sec-keys-hero{margin-bottom:clamp(22px,3.5vh,40px)}
-.keys-back{position:sticky; top:calc(var(--chrome-h) + 4px); align-self:flex-start; z-index:9; margin-bottom:12px}
+/* keys-zone header: title block left, "back to entrance" right — the same header-row pattern the
+   activity/event zones use. (It used to be a sticky left-aligned button, which scrolled over the title
+   on narrow screens.) The arrow points right because this zone sits to the LEFT of the entrance. */
+.keys-head{display:flex; align-items:flex-start; justify-content:space-between; gap:clamp(14px,3vw,36px)}
+.keys-head-l{min-width:0}
+.keys-back{flex:none; align-self:flex-start; margin:2px 0 0}
+@media(max-width:680px){
+  .keys-head{flex-direction:column-reverse; align-items:stretch}
+  .keys-back{align-self:flex-end; margin:0 0 10px}
+}
 
 /* ============================================================
    ITEM 5 — larger reading text (thumbnail cards + listing surface)
