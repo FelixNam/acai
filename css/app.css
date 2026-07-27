@@ -96,27 +96,22 @@ body.boot{background:#1c1726}
 .chrome-nav a:active{transform:translate(2px,2px); box-shadow:0 0 0 var(--ink-2)}
 .chrome-nav a:focus-visible{outline:2px solid var(--purple); outline-offset:2px}
 
-/* location label — right column, directly under the KR|EN control. It began life in its own slot
-   between the brand and the nav, where it competed with the tabs for width: once the row got tight
-   the nav started scrolling and clipped its leading tab (Browse rendered as "wse"). Stacked under
-   the language control it uses the bar's spare vertical space instead of horizontal space, and the
-   green rule sits last so the line ends flush with the control's right edge. */
-.chrome-right{
-  display:flex; flex-direction:column; align-items:flex-end; gap:5px;
-  /* shrink factor 100 vs the nav's 1: when the bar gets tight this label truncates long before the
-     tab row is forced to scroll. */
-  flex:0 100 auto; min-width:0;
-}
+/* location label — set vertically and pinned in the right gutter, directly under the KR|EN control.
+   Every horizontal placement it had before (its own slot in the bar row, then a column under the
+   control) either squeezed the tab row or left a ragged right edge, because the label is ~157px wide
+   and the control is only 80px. Turned on its side it occupies the page gutter instead of the bar,
+   so the bar's right side is exactly one element wide and the two read as a single column.
+   position:fixed, but kept inside <header> so `.chrome[hidden]` still hides it on the intro screen. */
 .chrome-crumb{
-  /* long labels exist (#/semantic/… reads "Themes / Concepts relating to the creative process"), so
-     cap the line and let it ellipsize — the full text stays on the title tooltip. */
-  max-width:min(26vw,300px); text-align:right;
+  position:fixed; top:calc(var(--chrome-h) + 10px); right:clamp(16px,4vw,46px);
+  writing-mode:vertical-rl;                       /* inline axis runs downward */
+  max-height:min(46vh,340px);
   font-family:var(--mono); font-weight:700; font-size:10.5px; letter-spacing:.14em;
   color:var(--ink-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
+/* the green rule follows the text down the column, so the line ends on a tick instead of trailing off */
 .chrome-crumb::after{
-  content:''; display:inline-block; width:14px; height:2px; margin-left:9px;
-  vertical-align:middle; background:var(--green-d);
+  content:''; display:inline-block; width:2px; height:14px; margin-top:9px; background:var(--green-d);
 }
 
 /* KR | EN segmented control. Same arcade geometry as the nav chips (2px rule + hard offset shadow)
@@ -146,11 +141,10 @@ body.has-chrome .lang-seg-float{display:none}
 /* responsive: structural collapse, in this order — subtitle, tab padding, then the nav scrolls.
    The location label no longer collapses with width: it lives in the brand column and never
    competes with the tabs. The English tab labels run ~25% wider than the Korean ones. */
-/* the label is expendable: below the width where it fits in full it is hidden rather than shown as
-   "FACET 01 / T…". Thresholds = brand + nav + gaps + the label's own 157px, measured per language
-   (the EN tab row is 664px vs Korean's 444px). */
-@media(max-width:1200px){ .chrome-crumb{display:none} }
-@media(max-width:1400px){ html[lang="en"] .chrome-crumb{display:none} }
+/* the vertical label lives in the page gutter, so it needs the viewport to be wider than the 1320px
+   content column plus room for the strip; below that it would sit over the content and is hidden.
+   Language no longer matters — it takes no width in the bar row. */
+@media(max-width:1400px){ .chrome-crumb{display:none} }
 @media(max-width:1500px){ html[lang="en"] .chrome-nav a{padding:9px 10px} }
 /* the wider EN labels still outrun the bar below ~1180px, so the row scrolls there: fade the trailing
    edge so a clipped tab reads as "more to the right", not as a broken tab. */
