@@ -110,7 +110,7 @@ function descFor(type, f){ const FD = FIELD_DESC(); return FD[`${type}.${f}`] ||
 function fmtVal(type, f, v){
   if(f==='source_system') return vlabel(v);
   if(f==='type' && type==='participant') return vlabel(v);
-  if(f==='workType') return vlabel(v);
+  if(f==='workType') return mediumLabel(v);
   if(f==='country') return vlabel(v);
   if(f==='program_type') return vlabel(v);
   return v;

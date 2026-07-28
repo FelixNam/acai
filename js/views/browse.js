@@ -51,7 +51,7 @@ function metaLine(type, r){
   if(type==='program') return `${r.program_type||''}${r.year?` · ${r.year}`:''}`;
   if(type==='opencall') return `${r.region||''}${r.end_date?` · ${L('마감','Deadline')} ${r.end_date}`:''}`;
   if(type==='participant') return [r.type, r.birth_year?`b.${r.birth_year}`:'', (r.roles||[]).slice(0,2).join(', ')].filter(Boolean).join(' · ');
-  if(type==='work') return [r.workType, r.year_created_text].filter(Boolean).join(' · ');
+  if(type==='work') return [isEN()? (MEDIUM_EN[r.workType]||r.workType) : r.workType, r.year_created_text].filter(Boolean).join(' · ');
   if(type==='organization') return [r.type, r.country].filter(Boolean).join(' · ');
   if(type==='venue') return r.address||'';
   return '';
@@ -251,7 +251,7 @@ async function ensureOrgNames(){
 function facetLabel(f, val){
   if(!isEN()) return vlabel(val);
   const m = f.meta;
-  if(m==='exhibition_genre') return MEDIUM_EN[val] || vlabel(val);
+  if(m==='exhibition_genre' || m==='work_type') return MEDIUM_EN[val] || vlabel(val);
   if(m==='exhibition_series') return SERIES_EN[val] || val;
   if(m==='exhibition_institution' || m==='venue_institution') return (_ORG_EN && _ORG_EN[val]) || ORG_SUPP[val] || val;
   return vlabel(val);
