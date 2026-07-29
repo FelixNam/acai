@@ -1440,7 +1440,7 @@ body.boot .ticket::before{background:#322b47}   /* dark-toned but a touch lighte
   .zone-head-l{align-items:flex-start}
   .zone-head .tab-v{writing-mode:horizontal-tb; transform:none; letter-spacing:.18em; padding-bottom:0}
   .zone-head-l > div:last-child{min-width:0}
-  .zone-head > .pill, .zone-head button.pill{align-self:flex-end}
+  .zone-head > .pill, .zone-head button.pill{order:-1; align-self:flex-end}  /* 제목보다 위, 우측 */
   .zone-head h2, .zone-head h2.h2-sentence{font-size:clamp(27px,8vw,36px)}
 }
 @media(max-width:560px){

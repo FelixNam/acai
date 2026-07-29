@@ -147,12 +147,27 @@ async function route(){
   mount(`<div class="empty">찾을 수 없습니다.<br><br><a class="pill" href="#/">↑ 입구</a></div>`);
 }
 
+/* mobile hamburger: opens/closes the collapsed tab+language panel. Closed on any navigation,
+   language pick, or outside tap so the panel never lingers over content. */
+function wireMenu(){
+  const btn=document.getElementById('chrome-menu'); if(!btn) return;
+  const close=()=>{ document.body.classList.remove('nav-open'); btn.setAttribute('aria-expanded','false'); };
+  btn.addEventListener('click', e=>{ e.stopPropagation();
+    const on=document.body.classList.toggle('nav-open'); btn.setAttribute('aria-expanded', String(on)); });
+  document.getElementById('chrome-collapse')?.addEventListener('click', e=>{
+    if(e.target.closest('a,[data-setlang]')) close(); });
+  document.addEventListener('click', e=>{
+    if(document.body.classList.contains('nav-open') && !e.target.closest('#chrome')) close(); });
+  window.addEventListener('hashchange', close);
+}
+
 /* ---- boot ---- */
 async function start(){
   document.documentElement.lang = getLang();
   paintLogos();
   buildNav();
   paintLangToggle();
+  wireMenu();
   window.addEventListener('hashchange', route);
   // preload meta + search index in background
   meta(); searchIndex();
