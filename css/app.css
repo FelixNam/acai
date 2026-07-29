@@ -155,7 +155,9 @@ body.has-chrome .lang-seg-float{display:none}
 @media(max-width:1024px){ .chrome-words i{display:none} }
 @media(max-width:760px){
   .chrome{gap:10px}
-  .chrome-nav{-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent); mask-image:linear-gradient(90deg,#000 88%,transparent)}
+  /* longer fade so a clipped tab dissolves before it reaches the KR|EN control instead of being
+     sliced hard against it */
+  .chrome-nav{-webkit-mask-image:linear-gradient(90deg,#000 72%,transparent 97%); mask-image:linear-gradient(90deg,#000 72%,transparent 97%)}
   .chrome-nav a{padding:8px 9px; font-size:11.5px}
   .lang-b{padding:7px 8px; font-size:11px}
 }

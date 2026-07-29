@@ -151,7 +151,7 @@
 .zone-head-l{display:flex; align-items:flex-end; gap:clamp(14px,1.8vw,28px)}
 .zone-head .tab-v{font-size:11px; padding-bottom:6px}
 .zone-head .scope{font-family:var(--mono); font-weight:400; font-size:12.5px; letter-spacing:.02em; color:#48425a}
-.zone-head h2{font-family:var(--display); font-weight:800; font-size:clamp(36px,5.2vw,76px); line-height:.94; letter-spacing:-.03em; color:#241c33; margin:6px 0 0}
+.zone-head h2{font-family:var(--display); font-weight:800; font-size:clamp(36px,5.2vw,76px); line-height:.94; letter-spacing:-.03em; color:#241c33; margin:6px 0 0; word-break:keep-all; overflow-wrap:break-word}
 .sec-activity .facet-grid, .sec-event .event-list{max-width:var(--maxw); margin:0 auto; width:100%}
 
 @media(max-width:760px){
@@ -1431,6 +1431,21 @@ body.boot .ticket::before{background:#322b47}   /* dark-toned but a touch lighte
 .at-open em{font-style:normal; font-size:17px}
 @media(max-width:900px){ .act-grid{grid-template-columns:repeat(2,1fr)} }
 @media(max-width:480px){ .act-grid{grid-template-columns:1fr} }
+/* mobile zone layout: the vertical FACET label reads sideways-cramped at phone width, the ENTRANCE
+   pill collided with the sentence title, and 48vh-tall tickets were mostly empty paper. */
+@media(max-width:760px){
+  .act-ticket{min-height:0}
+  .at-label{margin-top:18px}
+  .zone-head{flex-direction:column; align-items:stretch; gap:12px}
+  .zone-head-l{align-items:flex-start}
+  .zone-head .tab-v{writing-mode:horizontal-tb; transform:none; letter-spacing:.18em; padding-bottom:0}
+  .zone-head-l > div:last-child{min-width:0}
+  .zone-head > .pill, .zone-head button.pill{align-self:flex-end}
+  .zone-head h2, .zone-head h2.h2-sentence{font-size:clamp(27px,8vw,36px)}
+}
+@media(max-width:560px){
+  .zone-head-l{flex-direction:column; gap:8px}
+}
 
 /* ============================================================
    ROUND-6: event-title two-tone · button pixel-burst · berry background
