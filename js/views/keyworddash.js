@@ -177,23 +177,29 @@ function wMonthly(el){
 }
 function wPick(el){
   const sort = el.dataset.sort || 'n', q = (el.dataset.q || '').trim();
+  const lim = parseInt(el.dataset.lim || '70', 10);
   let list = KIDX.keywords;
   if(q) list = list.filter(d => d.k.includes(q) || kwLabel(d.k).toLowerCase().includes(q.toLowerCase()));
   if(sort === 'dyn') list = [...list].sort((a,b) => b.dyn - a.dyn);
   const maxN = KIDX.keywords[0].n;
   // each keyword is a rounded block; both its SIZE (font) and BLOCK COLOUR deepen with frequency
-  const chips = list.slice(0,52).map(d => { const t = Math.sqrt(d.n/maxN);
+  const chips = list.slice(0,lim).map(d => { const t = Math.sqrt(d.n/maxN);
     const sz = (12.5 + 13*t).toFixed(1);          // bigger for more frequent
     const a  = (0.05 + 0.42*t).toFixed(3);        // darker purple block for more frequent
     const on = d.k === el.dataset.sel;
     return `<button class="kd-cl${on?' on':''}" data-k="${esc(d.k)}" style="font-size:${sz}px${on?'':`;background:rgba(83,74,183,${a})`}">${isLocalCat(d.k)?'† ':''}${esc(kwLabel(d.k))}<sup>${d.n}</sup></button>`;
   }).join('') || `<span class="kd-empty">${L('일치하는 주제가 없습니다','No matching themes')}</span>`;
+  // 더 보기: 70 → 150 → 전체 → 접기 (검색 중에는 전체가 이미 좁혀져 있으면 생략)
+  const moreBtn = list.length > lim
+    ? `<button class="kd-cl kd-clmore" data-lim="${lim < 150 ? 150 : 99999}">+ ${L('더 보기','Show more')} <sup>${list.length - lim}</sup></button>`
+    : (lim > 70 && list.length > 70
+        ? `<button class="kd-cl kd-clmore" data-lim="70">${L('접기','Show less')}</button>` : '');
   return `<div class="kd-pick">
     <div class="kd-pickbar">
       <input class="kd-search" type="search" placeholder="${L('주제 검색','Search themes')} · ${KIDX.keywords.length}" value="${esc(q)}" aria-label="${L('주제 검색','Search themes')}">
       <div class="kd-sort"><button class="kd-sortb${sort==='n'?' on':''}" data-sort="n">${L('빈도순','By frequency')}</button><button class="kd-sortb${sort==='dyn'?' on':''}" data-sort="dyn">${L('상승순','By momentum')}</button></div>
     </div>
-    <div class="kd-cloud">${chips}</div>
+    <div class="kd-cloud">${chips}${moreBtn}</div>
     <div class="kd-hint">${L('크기 = 빈도 · 클릭하면 아래가 그 주제로 바뀝니다','Size = frequency · click to switch the dashboard below')}</div>
   </div>`;
 }
@@ -243,6 +249,7 @@ export async function wireKeywordDash(root){
     const pick = e.target.closest('[data-k]');
     if(pick && !pick.classList.contains('kd-ex')){ el.dataset.sel = pick.dataset.k; el.dataset.iq = ''; el.dataset.ip = 0; el.dataset.tf = ''; render(el);
       el.querySelector('.kd-focus,.kd-grid')?.scrollIntoView({behavior:'smooth', block:'start'}); return; }
+    const moreb = e.target.closest('.kd-clmore'); if(moreb){ el.dataset.lim = moreb.dataset.lim; render(el); return; }
     const sortb = e.target.closest('.kd-sortb'); if(sortb){ el.dataset.sort = sortb.dataset.sort; render(el); return; }
   });
   el.addEventListener('input', e => {
